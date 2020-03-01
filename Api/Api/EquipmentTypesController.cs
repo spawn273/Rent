@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentApi.Database;
-using RentApi.Database.Models;
+using RentApi.Infrastructure.Database;
+using RentApi.Infrastructure.Database.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,27 +19,22 @@ namespace RentApi.Api
             _context = context;
         }
 
-        [HttpGet("many")]
-        public async Task<ActionResult<IEnumerable<EquipmentType>>> GetEquipmentTypeMany([FromQuery] int[] id)
-        {
-            var result = await _context.EquipmentType
-                .Where(x => id.Contains(x.Id))
-                .ToArrayAsync();
-
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return result;
-        }
-
         // GET: api/EquipmentTypes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipmentType>>> GetEquipmentType()
         {
             Response.Headers.Add("X-Total-Count", _context.EquipmentType.Count().ToString());
             return await _context.EquipmentType.ToListAsync();
+        }
+
+        [HttpGet("many")]
+        public async Task<ActionResult<IEnumerable<EquipmentType>>> GetMany([FromQuery] int[] id)
+        {
+            var result = await _context.EquipmentType
+                .Where(x => id.Contains(x.Id))
+                .ToArrayAsync();
+
+            return result;
         }
 
         // GET: api/EquipmentTypes/5

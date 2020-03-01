@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentApi.Database;
-using RentApi.Database.Models;
+using RentApi.Infrastructure.Database;
+using RentApi.Infrastructure.Database.Models;
 
 namespace RentApi.Api
 {

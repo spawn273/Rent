@@ -10,8 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using RentApi.Database;
+using RentApi.Infrastructure.Database;
 using Microsoft.OpenApi.Models;
+using RentApi.Infrastructure;
 
 namespace RentApi
 {
@@ -27,6 +28,8 @@ namespace RentApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ApiHelper>();
+
             services.AddCors(o => o.AddPolicy("cors", builder =>
             {
                 builder.AllowAnyOrigin()
@@ -36,6 +39,8 @@ namespace RentApi
             }));
 
             services.AddControllers();
+
+            services.AddHttpContextAccessor();
 
             services.AddDbContext<RentApiDbContext>(options =>
                     options.UseNpgsql("Host=localhost;Port=5432;Database=rent;Username=postgres;Password=123"));
@@ -50,17 +55,10 @@ namespace RentApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetRequiredService<RentApiDbContext>();
-                SeedHelper.AutoSeed(context);
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

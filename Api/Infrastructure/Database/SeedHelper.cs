@@ -1,8 +1,8 @@
-﻿using RentApi.Database.Models;
+﻿using RentApi.Infrastructure.Database.Models;
 using System;
 using System.Linq;
 
-namespace RentApi.Database
+namespace RentApi.Infrastructure.Database
 {
     public static class SeedHelper
     {
@@ -68,6 +68,16 @@ namespace RentApi.Database
                 },
                 new Equipment
                 {
+                    Shop = shops[0],
+                    Name = "локти збс",
+                    EquipmentType = new EquipmentType
+                    {
+                        Name = "локти",
+                        Price = 100
+                    }
+                },
+                new Equipment
+                {
                     Shop = shops[1],
                     Name = "ноги збс",
                     EquipmentType = new EquipmentType
@@ -79,6 +89,47 @@ namespace RentApi.Database
             };
 
             context.Equipment.AddRange(equipment);
+
+            // Customers
+
+            var customers = new Customer[]
+            {
+                new Customer
+                {
+                    Name = "pasha technique"
+                }
+            };
+
+            context.Customer.AddRange(customers);
+
+            // Rents
+
+            var rents = new Rent[]
+            {
+                new Rent
+                {
+                    From = DateTime.Parse("2020-01-10"),
+                    To = DateTime.Parse("2020-02-10"),
+                }
+            };
+            context.Rent.AddRange(rents);
+
+            // RentEquipment
+
+            var rentEquipment = new RentEquipment[]
+            {
+                new RentEquipment
+                {
+                    Rent = rents[0],
+                    Equipment = equipment[0]
+                },
+                new RentEquipment
+                {
+                    Rent = rents[0],
+                    Equipment = equipment[1]
+                },
+            };
+            context.RentEquipment.AddRange(rentEquipment);
 
             context.SaveChanges();
         }

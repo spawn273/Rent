@@ -5,14 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentApi.Database;
-using RentApi.Database.Models;
+using RentApi.Infrastructure;
+using RentApi.Infrastructure.Database;
+using RentApi.Infrastructure.Database.Models;
 
 namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EquipmentsController : ControllerBase
+    public class EquipmentsController : BaseApiController
     {
         private readonly RentApiDbContext _context;
 
@@ -23,11 +24,35 @@ namespace RentApi.Api
 
         // GET: api/Equipments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentList(int shopId)
+        public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentList(int? shopId, int? rentId)
         {
-            var equipment = _context.Equipment.Where(x => x.ShopId == shopId);
-            Response.Headers.Add("X-Total-Count", equipment.Count().ToString());
-            return await equipment.ToListAsync();
+            var query = _context.Equipment.AsQueryable();
+
+            if (shopId.HasValue)
+            {
+                query = query.Where(x => x.ShopId == shopId);
+            }
+
+            if (rentId.HasValue)
+            {
+                query = _context.RentEquipment
+                    .Where(x => x.RentId == rentId)
+                    .Select(x => x.Equipment);
+            }
+
+            var equipment = await query.ToArrayAsync();
+            SetTotalCount(equipment.Length);
+            return equipment;
+        }
+
+        [HttpGet("many")]
+        public async Task<ActionResult<IEnumerable<Equipment>>> GetMany([FromQuery] int[] id)
+        {
+            var result = await _context.Equipment
+                .Where(x => id.Contains(x.Id))
+                .ToArrayAsync();
+
+            return result;
         }
 
         // GET: api/Equipments/5

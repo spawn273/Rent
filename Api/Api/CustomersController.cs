@@ -12,60 +12,60 @@ namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeesController : BaseApiController
+    public class CustomersController : BaseApiController
     {
         private readonly RentApiDbContext _context;
 
-        public EmployeesController(RentApiDbContext context)
+        public CustomersController(RentApiDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Employees
+        // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
+        public async Task<ActionResult<Customer[]>> GetCustomer()
         {
-            var result = await _context.Employee.ToArrayAsync();
+            var result = await _context.Customer.ToArrayAsync();
             SetTotalCount(result.Length);
             return result;
         }
 
         [HttpGet("many")]
-        public async Task<ActionResult<Employee[]>> GetMany([FromQuery] int[] id)
+        public async Task<ActionResult<Customer[]>> GetMany([FromQuery] int[] id)
         {
-            var result = await _context.Employee
+            var result = await _context.Customer
                 .Where(x => id.Contains(x.Id))
                 .ToArrayAsync();
 
             return result;
         }
 
-        // GET: api/Employees/5
+        // GET: api/Customers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id)
+        public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var customer = await _context.Customer.FindAsync(id);
 
-            if (employee == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return employee;
+            return customer;
         }
 
-        // PUT: api/Employees/5
+        // PUT: api/Customers/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        public async Task<IActionResult> PutCustomer(int id, Customer customer)
         {
-            if (id != employee.Id)
+            if (id != customer.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(employee).State = EntityState.Modified;
+            _context.Entry(customer).State = EntityState.Modified;
 
             try
             {
@@ -73,7 +73,7 @@ namespace RentApi.Api
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EmployeeExists(id))
+                if (!CustomerExists(id))
                 {
                     return NotFound();
                 }
@@ -86,37 +86,37 @@ namespace RentApi.Api
             return NoContent();
         }
 
-        // POST: api/Employees
+        // POST: api/Customers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            _context.Employee.Add(employee);
+            _context.Customer.Add(customer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+            return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
         }
 
-        // DELETE: api/Employees/5
+        // DELETE: api/Customers/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Employee>> DeleteEmployee(int id)
+        public async Task<ActionResult<Customer>> DeleteCustomer(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
-            if (employee == null)
+            var customer = await _context.Customer.FindAsync(id);
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            _context.Employee.Remove(employee);
+            _context.Customer.Remove(customer);
             await _context.SaveChangesAsync();
 
-            return employee;
+            return customer;
         }
 
-        private bool EmployeeExists(int id)
+        private bool CustomerExists(int id)
         {
-            return _context.Employee.Any(e => e.Id == id);
+            return _context.Customer.Any(e => e.Id == id);
         }
     }
 }

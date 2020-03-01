@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentApi.Database;
-using RentApi.Database.Models;
+using RentApi.Infrastructure.Database;
+using RentApi.Infrastructure.Database.Models;
 
 namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShopsController : ControllerBase
+    public class ShopsController : BaseApiController
     {
         private readonly RentApiDbContext _context;
 
@@ -25,8 +25,20 @@ namespace RentApi.Api
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Shop>>> GetShop()
         {
-            Response.Headers.Add("X-Total-Count", _context.Shop.Count().ToString());
-            return await _context.Shop.ToListAsync();
+            var result = await _context.Shop.ToArrayAsync();
+            SetTotalCount(result.Length);
+            return result;
+        }
+
+
+        [HttpGet("many")]
+        public async Task<ActionResult<Shop[]>> GetMany([FromQuery] int[] id)
+        {
+            var result = await _context.Shop
+                .Where(x => id.Contains(x.Id))
+                .ToArrayAsync();
+
+            return result;
         }
 
         // GET: api/Shops/5

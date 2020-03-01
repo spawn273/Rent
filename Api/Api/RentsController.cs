@@ -12,60 +12,60 @@ namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeesController : BaseApiController
+    public class RentsController : BaseApiController
     {
         private readonly RentApiDbContext _context;
 
-        public EmployeesController(RentApiDbContext context)
+        public RentsController(RentApiDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Employees
+        // GET: api/Rents
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
+        public async Task<ActionResult<IEnumerable<Rent>>> GetRent()
         {
-            var result = await _context.Employee.ToArrayAsync();
+            var result = await _context.Rent.ToArrayAsync();
             SetTotalCount(result.Length);
             return result;
         }
 
         [HttpGet("many")]
-        public async Task<ActionResult<Employee[]>> GetMany([FromQuery] int[] id)
+        public async Task<ActionResult<Rent[]>> GetMany([FromQuery] int[] id)
         {
-            var result = await _context.Employee
+            var result = await _context.Rent
                 .Where(x => id.Contains(x.Id))
                 .ToArrayAsync();
 
             return result;
         }
 
-        // GET: api/Employees/5
+        // GET: api/Rents/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id)
+        public async Task<ActionResult<Rent>> GetRent(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var rent = await _context.Rent.FindAsync(id);
 
-            if (employee == null)
+            if (rent == null)
             {
                 return NotFound();
             }
 
-            return employee;
+            return rent;
         }
 
-        // PUT: api/Employees/5
+        // PUT: api/Rents/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        public async Task<IActionResult> PutRent(int id, Rent rent)
         {
-            if (id != employee.Id)
+            if (id != rent.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(employee).State = EntityState.Modified;
+            _context.Entry(rent).State = EntityState.Modified;
 
             try
             {
@@ -73,7 +73,7 @@ namespace RentApi.Api
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EmployeeExists(id))
+                if (!RentExists(id))
                 {
                     return NotFound();
                 }
@@ -86,37 +86,37 @@ namespace RentApi.Api
             return NoContent();
         }
 
-        // POST: api/Employees
+        // POST: api/Rents
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Rent>> PostRent(Rent rent)
         {
-            _context.Employee.Add(employee);
+            _context.Rent.Add(rent);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+            return CreatedAtAction("GetRent", new { id = rent.Id }, rent);
         }
 
-        // DELETE: api/Employees/5
+        // DELETE: api/Rents/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Employee>> DeleteEmployee(int id)
+        public async Task<ActionResult<Rent>> DeleteRent(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
-            if (employee == null)
+            var rent = await _context.Rent.FindAsync(id);
+            if (rent == null)
             {
                 return NotFound();
             }
 
-            _context.Employee.Remove(employee);
+            _context.Rent.Remove(rent);
             await _context.SaveChangesAsync();
 
-            return employee;
+            return rent;
         }
 
-        private bool EmployeeExists(int id)
+        private bool RentExists(int id)
         {
-            return _context.Employee.Any(e => e.Id == id);
+            return _context.Rent.Any(e => e.Id == id);
         }
     }
 }
