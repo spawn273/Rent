@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RentApi.Api.DTO;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 
@@ -23,11 +24,23 @@ namespace RentApi.Api
 
         // GET: api/Rents
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rent>>> GetRent()
+        public async Task<ActionResult<object>> GetRent()
         {
             var result = await _context.Rent.ToArrayAsync();
             SetTotalCount(result.Length);
             return result;
+
+            //SetTotalCount(1);
+            //return new[]
+            //{
+            //    new
+            //    {
+            //        Id = 1,
+            //        From = DateTime.Now,
+            //        To = DateTime.Now,
+            //        EquipmentIds = new int[] { 1, 2 }
+            //    }
+            //};
         }
 
         [HttpGet("many")]
@@ -42,9 +55,25 @@ namespace RentApi.Api
 
         // GET: api/Rents/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Rent>> GetRent(int id)
+        public async Task<ActionResult<RentDTO[]>> GetRent(int id)
         {
-            var rent = await _context.Rent.FindAsync(id);
+            //return new
+            //{
+            //    Id = 1,
+            //    From = DateTime.Now,
+            //    To = DateTime.Now,
+            //    EquipmentIds = new int[] { 1, 2 }
+            //};
+
+            var rent = await _context.Rent.Where(x => x.Id == id)
+                .Select(x => new RentDTO
+                {
+                    Id = x.Id,
+                    From = x.From,
+                    To = x.To,
+                    EquipmentIds = x.RentEquipment.Select(x => x.Id).ToArray()
+                })
+                .ToArrayAsync();
 
             if (rent == null)
             {
@@ -58,7 +87,7 @@ namespace RentApi.Api
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRent(int id, Rent rent)
+        public async Task<IActionResult> PutRent(int id, RentDTO rent)
         {
             if (id != rent.Id)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RentApi.Infrastructure.Database.Models
 {
@@ -7,5 +8,7 @@ namespace RentApi.Infrastructure.Database.Models
         public int Id { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
+
+        public List<RentEquipment> RentEquipment { get; set; }
     }
 }
