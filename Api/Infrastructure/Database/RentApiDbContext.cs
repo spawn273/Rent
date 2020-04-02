@@ -21,5 +21,21 @@ namespace RentApi.Infrastructure.Database
         public DbSet<Shop> Shop { get; set; }
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Customer> Customer { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // https://github.com/dotnet/efcore/issues/4711
+            modelBuilder
+               .Entity<Rent>()
+               .Property(x => x.From)
+               .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+            modelBuilder
+               .Entity<Rent>()
+               .Property(x => x.To)
+               .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+        }
     }
 }

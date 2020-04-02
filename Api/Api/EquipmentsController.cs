@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RentApi.Api.DTO;
+using RentApi.Api.Extensions;
 using RentApi.Infrastructure;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
@@ -24,7 +26,7 @@ namespace RentApi.Api
 
         // GET: api/Equipments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentList(int? shopId, int? rentId)
+        public async Task<ActionResult<IEnumerable<EquipmentDTO>>> GetEquipmentList(int? shopId, int? rentId)
         {
             var query = _context.Equipment.AsQueryable();
 
@@ -40,16 +42,17 @@ namespace RentApi.Api
                     .Select(x => x.Equipment);
             }
 
-            var equipment = await query.ToArrayAsync();
+            var equipment = await query.ToDTO().ToArrayAsync();
             SetTotalCount(equipment.Length);
             return equipment;
         }
 
         [HttpGet("many")]
-        public async Task<ActionResult<IEnumerable<Equipment>>> GetMany([FromQuery] int[] id)
+        public async Task<ActionResult<IEnumerable<EquipmentDTO>>> GetMany([FromQuery] int[] id)
         {
             var result = await _context.Equipment
                 .Where(x => id.Contains(x.Id))
+                .ToDTO()
                 .ToArrayAsync();
 
             return result;
@@ -57,9 +60,9 @@ namespace RentApi.Api
 
         // GET: api/Equipments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Equipment>> GetEquipment(int id)
+        public async Task<ActionResult<EquipmentDTO>> GetEquipment(int id)
         {
-            var equipment = await _context.Equipment.FindAsync(id);
+            var equipment = await _context.Equipment.Where(x => x.Id == id).ToDTO().FirstOrDefaultAsync();
 
             if (equipment == null)
             {

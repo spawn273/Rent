@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentApi.Api.DTO;
+using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 
@@ -24,30 +25,22 @@ namespace RentApi.Api
 
         // GET: api/Rents
         [HttpGet]
-        public async Task<ActionResult<object>> GetRent()
+        public async Task<ActionResult<RentDTO[]>> GetRent()
         {
-            var result = await _context.Rent.ToArrayAsync();
+            var result = await _context.Rent
+                .ToDTO()
+                .ToArrayAsync();
+
             SetTotalCount(result.Length);
             return result;
-
-            //SetTotalCount(1);
-            //return new[]
-            //{
-            //    new
-            //    {
-            //        Id = 1,
-            //        From = DateTime.Now,
-            //        To = DateTime.Now,
-            //        EquipmentIds = new int[] { 1, 2 }
-            //    }
-            //};
         }
 
         [HttpGet("many")]
-        public async Task<ActionResult<Rent[]>> GetMany([FromQuery] int[] id)
+        public async Task<ActionResult<RentDTO[]>> GetMany([FromQuery] int[] id)
         {
             var result = await _context.Rent
                 .Where(x => id.Contains(x.Id))
+                .ToDTO()
                 .ToArrayAsync();
 
             return result;
@@ -55,25 +48,11 @@ namespace RentApi.Api
 
         // GET: api/Rents/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RentDTO[]>> GetRent(int id)
+        public async Task<ActionResult<RentDTO>> GetRent(int id)
         {
-            //return new
-            //{
-            //    Id = 1,
-            //    From = DateTime.Now,
-            //    To = DateTime.Now,
-            //    EquipmentIds = new int[] { 1, 2 }
-            //};
-
             var rent = await _context.Rent.Where(x => x.Id == id)
-                .Select(x => new RentDTO
-                {
-                    Id = x.Id,
-                    From = x.From,
-                    To = x.To,
-                    EquipmentIds = x.RentEquipment.Select(x => x.Id).ToArray()
-                })
-                .ToArrayAsync();
+                .ToDTO()
+                .FirstOrDefaultAsync();
 
             if (rent == null)
             {
@@ -87,44 +66,41 @@ namespace RentApi.Api
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRent(int id, RentDTO rent)
+        public async Task<ActionResult<RentDTO>> PutRent(int id, RentDTO rent)
         {
-            if (id != rent.Id)
+            var entity = await _context.Rent.Include(x => x.RentEquipment).FirstOrDefaultAsync(x => x.Id == id);
+            if (rent == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(rent).State = EntityState.Modified;
+            entity.From = rent.From;
+            entity.To = rent.To;
+            entity.RentEquipment = rent.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return rent;
         }
 
         // POST: api/Rents
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Rent>> PostRent(Rent rent)
+        public async Task<ActionResult<RentDTO>> PostRent(RentDTO dto)
         {
+            var rent = new Rent
+            {
+                From = dto.From,
+                To = dto.To,
+                RentEquipment = dto.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList()
+            };
             _context.Rent.Add(rent);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRent", new { id = rent.Id }, rent);
+            dto.Id = rent.Id;
+
+            return CreatedAtAction("GetRent", new { id = rent.Id }, dto);
         }
 
         // DELETE: api/Rents/5
@@ -141,11 +117,6 @@ namespace RentApi.Api
             await _context.SaveChangesAsync();
 
             return rent;
-        }
-
-        private bool RentExists(int id)
-        {
-            return _context.Rent.Any(e => e.Id == id);
         }
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
+import { Create, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
 
 import { Form, Field } from 'react-final-form'
 import arrayMutators from 'final-form-arrays'
@@ -40,15 +40,18 @@ export const RentsShow = (props) => (
 const OrderOrigin = ({ formData, ...rest }) => {
     console.log(formData);
 
+    if (!formData.equipmentIds) {
+        formData.equipmentIds = [];
+    }
 
-    let asd = useGetMany('equipments', formData.equipmentIds);
-    console.log(asd);
+    let response = useGetMany('equipments', formData.equipmentIds);
 
-    if (!asd.loaded) {
+    if (!response.loaded) {
         return null;
     }
 
-    const columns = ["id", "name", "Company"];
+    const data = response.data
+    console.log(data);
 
     return (
         <TableContainer component={Paper}>
@@ -57,13 +60,15 @@ const OrderOrigin = ({ formData, ...rest }) => {
                     <TableRow>
                         <TableCell>Id</TableCell>
                         <TableCell>Name</TableCell>
+                        <TableCell>Price</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {asd.data.map((row) => (
+                    {data.map((row) => (
                         <TableRow key={row.id}>
                             <TableCell component="th" scope="row">{row.id}</TableCell>
                             <TableCell>{row.name}</TableCell>
+                            <TableCell>{row.price}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -91,4 +96,24 @@ export const RentsEdit = (props) => (
 
         </SimpleForm>
     </Edit>
+);
+
+export const RentsCreate = (props) => (
+    <Create {...props}>
+        <SimpleForm redirect="list">
+            <DateTimeInput source="from" validate={required()} initialValue={new Date()} />
+            <DateTimeInput source="to" validate={required()} initialValue={new Date()} />
+
+            <ReferenceArrayInput source="equipmentIds" reference="equipments">
+                <AutocompleteArrayInput />
+            </ReferenceArrayInput>
+
+            <FormDataConsumer >
+                {formDataProps => (
+                    <OrderOrigin {...formDataProps} />
+                )}
+            </FormDataConsumer>
+
+        </SimpleForm>
+    </Create>
 );
