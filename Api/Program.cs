@@ -17,20 +17,7 @@ namespace RentApi
         {
             var host = CreateHostBuilder(args).Build();
 
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<RentApiDbContext>();
-                    //SeedHelper.AutoSeed(context);
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database.");
-                }
-            }
+            SeedHelper.AutoSeed(host.Services);
 
             host.Run();
         }

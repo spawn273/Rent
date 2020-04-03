@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities;
 
 namespace RentApi.Infrastructure.Database
 {
-    public class RentApiDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User, Role, int>
     {
-        public RentApiDbContext (DbContextOptions<RentApiDbContext> options)
+        public AppDbContext (DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }

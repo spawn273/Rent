@@ -5,6 +5,7 @@ import { Form, Field } from 'react-final-form'
 import arrayMutators from 'final-form-arrays'
 import { FieldArray } from 'react-final-form-arrays'
 import MUIDataTable from "mui-datatables";
+import { useSelector, useDispatch } from 'react-redux';
 
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,15 +18,16 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 
-export const RentsList = props => (
-    <List {...props}>
+export const RentsList = props => {
+    const shop = useSelector((state) => state.shop);
+    return <List {...props} filter={{ shopId: shop }}>
         <Datagrid rowClick="edit">
             <TextField source="id" />
             <DateField source="from" />
             <DateField source="to" />
         </Datagrid>
     </List>
-);
+};
 
 export const RentsShow = (props) => (
     <Show {...props}>

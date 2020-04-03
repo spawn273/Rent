@@ -9,6 +9,7 @@ using RentApi.Api.DTO;
 using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure;
 
 namespace RentApi.Api
 {
@@ -16,19 +17,25 @@ namespace RentApi.Api
     [ApiController]
     public class RentsController : BaseApiController
     {
-        private readonly RentApiDbContext _context;
+        private readonly AppDbContext _context;
 
-        public RentsController(RentApiDbContext context)
+        public RentsController(AppDbContext context)
         {
             _context = context;
         }
 
         // GET: api/Rents
         [HttpGet]
-        public async Task<ActionResult<RentDTO[]>> GetRent()
+        public async Task<ActionResult<RentDTO[]>> GetRents(int? shopId)
         {
-            var result = await _context.Rent
-                .ToDTO()
+            var query = _context.Rent.AsQueryable();
+
+            if (shopId.HasValue)
+            {
+                query = query.Where(x => x.ShopId == shopId);
+            }
+
+            var result = await query.ToDTO()
                 .ToArrayAsync();
 
             SetTotalCount(result.Length);
@@ -74,6 +81,7 @@ namespace RentApi.Api
                 return NotFound();
             }
 
+            entity.CustomerId = rent.CustomerId;
             entity.From = rent.From;
             entity.To = rent.To;
             entity.RentEquipment = rent.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList();
@@ -83,14 +91,14 @@ namespace RentApi.Api
             return rent;
         }
 
-        // POST: api/Rents
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         public async Task<ActionResult<RentDTO>> PostRent(RentDTO dto)
         {
             var rent = new Rent
             {
+                EmployeeId = HttpContext.GetEmployeeId(),
+                CustomerId = dto.CustomerId,
+                ShopId = HttpContext.GetShopId(),
                 From = dto.From,
                 To = dto.To,
                 RentEquipment = dto.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList()

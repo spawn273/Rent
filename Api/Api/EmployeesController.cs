@@ -14,9 +14,9 @@ namespace RentApi.Api
     [ApiController]
     public class EmployeesController : BaseApiController
     {
-        private readonly RentApiDbContext _context;
+        private readonly AppDbContext _context;
 
-        public EmployeesController(RentApiDbContext context)
+        public EmployeesController(AppDbContext context)
         {
             _context = context;
         }

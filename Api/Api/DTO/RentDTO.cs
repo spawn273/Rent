@@ -9,6 +9,8 @@ namespace RentApi.Api.DTO
     public class RentDTO
     {
         public int Id { get; set; }
+        public int EmployeeId { get; set; }
+        public int CustomerId { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
 
