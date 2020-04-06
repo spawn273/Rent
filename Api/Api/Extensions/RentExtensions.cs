@@ -11,6 +11,7 @@ namespace RentApi.Api.Extensions
             return rents.Select(x => new RentDTO
             {
                 Id = x.Id,
+                ShopId = x.ShopId,
                 EmployeeId = x.EmployeeId,
                 CustomerId = x.CustomerId,
                 From = x.From,

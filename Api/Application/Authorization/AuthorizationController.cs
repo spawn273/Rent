@@ -2,12 +2,15 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RentApi.Infrastructure.Database;
 using SmartAnalytics.BASF.Backend.Application.Authorization.DTO;
 using SmartAnalytics.BASF.Backend.Infrastructure;
 using SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
@@ -23,30 +26,39 @@ namespace SmartAnalytics.BASF.Backend.Application.Authorization
     {
         private readonly UserManager<User> _userManager;
         private readonly AuthorizationOptions _authOptions;
+        private readonly AppDbContext _context;
 
-        public AuthorizationController(UserManager<User> userManager, IOptions<AuthorizationOptions> authOptions)
+        public AuthorizationController(UserManager<User> userManager, IOptions<AuthorizationOptions> authOptions, AppDbContext context)
         {
             _userManager = userManager;
             _authOptions = authOptions.Value;
+            _context = context;
         }
-        
+
         [HttpPost("token")]
-        public async Task<ActionResult<string>> Token(TokenRequest request)
+        public async Task<ActionResult<object>> Token(TokenRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
+            var user = await _context.Users
+                .Include(x => x.Employee)
+                .FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user == null || !user.EmailConfirmed || !await _userManager.CheckPasswordAsync(user, request.Password))
             {
                 return BadRequest();
             }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var roleClaims = userRoles.Select(x => new Claim(ClaimTypes.Role, x));
+            var claims = new List<Claim>();
 
-            var claims = new Claim[]
+            var role = (await _userManager.GetRolesAsync(user)).First();
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+            if (role == "employee")
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            }.Concat(roleClaims).ToArray();
+                claims.Add(new Claim("shop", user.Employee.ShopId.ToString()));
+            }
+
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+
 
             var jwt = new JwtSecurityToken(
                 issuer: _authOptions.Jwt.Issuer,
@@ -56,8 +68,9 @@ namespace SmartAnalytics.BASF.Backend.Application.Authorization
                 signingCredentials: new SigningCredentials(_authOptions.Jwt.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
             );
 
+
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            return encodedJwt;
+            return new { Token = encodedJwt };
         }
 
         [HttpPost("register")]

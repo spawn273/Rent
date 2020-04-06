@@ -11,16 +11,55 @@ import MyLayout from './MyLayout';
 import customRoutes from './customRoutes';
 import shopReducer from './shopReducer';
 import myDataProvider from './DataProvider';
+import authProvider from './authProvider';
 
+import { useSelector, useDispatch } from 'react-redux';
+
+const Wrapper1 = (props) => {
+    const shop = useSelector((state) => state.shop);
+    return props.children(props, shop);
+};
+
+// const Wrapper = (props) => { 
+//     const shop = useSelector((state) => state.shop);
+
+
+//     return ({children})
+// };
 
 const App = () => (
-    <Admin customReducers={{ shop: shopReducer }}  customRoutes={customRoutes} layout={MyLayout} dataProvider={myDataProvider}>
+    <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} dataProvider={myDataProvider} authProvider={authProvider}>
+
         <Resource name="shops" list={ShopsList} />
-        <Resource name="rents" list={RentsList} edit={RentsEdit} create={RentsCreate}/>
+        <Resource name="rents" list={RentsList} edit={RentsEdit} show={RentsShow} create={RentsCreate}/>
         <Resource name="employees" list={EmployeesList} />
+        <Resource name="customers" />
         <Resource name="equipments" list={EquipmentList} edit={EquipmentEdit} create={EquipmentCreate}  />
         <Resource name="equipmentTypes" list={EquipmentTypesList} />
+
+
     </Admin>
 );
+
+        // {permissions => {
+        //     return [
+        //         <Resource name="shops" list={ShopsList} />,
+        //         // <Wrapper1>
+        //         //     {
+        //         //         (props, shop) => <Resource {...props} name="rents" list={RentsList} 
+        //         //                             edit={RentsEdit} 
+        //         //                             create={RentsCreate}/>
+        //         //     }
+        //         // </Wrapper1>,
+
+        //         <Resource name="rents" list={RentsList}
+        //             edit={RentsEdit}
+        //             create={RentsCreate} />,
+
+        //         <Resource name="employees" list={EmployeesList} />,
+        //         <Resource name="equipments" list={EquipmentList} edit={EquipmentEdit} create={EquipmentCreate} />,
+        //         <Resource name="equipmentTypes" list={EquipmentTypesList} />,
+        //     ]
+        // }}
 
 export default App;

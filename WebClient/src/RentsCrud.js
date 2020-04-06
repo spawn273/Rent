@@ -1,5 +1,5 @@
 import React from 'react';
-import { Create, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
+import { ShowController, ShowView, usePermissions, Create, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
 
 import { Form, Field } from 'react-final-form'
 import arrayMutators from 'final-form-arrays'
@@ -17,11 +17,69 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+import { cloneElement, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import {
+    TopToolbar, CreateButton, ExportButton, Button, sanitizeListRestProps,
+} from 'react-admin';
+import IconEvent from '@material-ui/icons/Event';
 
-export const RentsList = props => {
+
+
+const ListActions = ({
+    create,
+    currentSort,
+    className,
+    resource,
+    filters,
+    displayedFilters,
+    exporter, // you can hide ExportButton if exporter = (null || false)
+    filterValues,
+    permanentFilter,
+    hasCreate, // you can hide CreateButton if hasCreate = false
+    basePath,
+    selectedIds,
+    onUnselectItems,
+    showFilter,
+    maxResults,
+    total,
+    ...rest
+}) => {
+    return (
+        <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+            {filters && cloneElement(filters, {
+                resource,
+                showFilter,
+                displayedFilters,
+                filterValues,
+                context: 'button',
+            })}
+            {create && <CreateButton basePath={basePath} />}
+            <ExportButton
+                disabled={total === 0}
+                resource={resource}
+                sort={currentSort}
+                filter={{ ...filterValues, ...permanentFilter }}
+                exporter={exporter}
+                maxResults={maxResults}
+            />
+            {/* Add your custom actions */}
+
+        </TopToolbar>
+    )
+};
+
+ListActions.defaultProps = {
+    selectedIds: [],
+    onUnselectItems: () => null,
+};
+
+export const RentsList = ({ permissions, ...props }) => {
     const shop = useSelector((state) => state.shop);
-    return <List {...props} filter={{ shopId: shop }}>
-        <Datagrid rowClick="edit">
+    const isMyShop = permissions && permissions.isMyShop(shop);
+    return <List {...props} actions={<ListActions create={isMyShop} {...props} />} filter={{ shopId: shop }}>
+        {/* return <List {...props} filter={{ shopId: shop }}> */}
+        <Datagrid rowClick="show">
             <TextField source="id" />
             <DateField source="from" />
             <DateField source="to" />
@@ -29,31 +87,61 @@ export const RentsList = props => {
     </List>
 };
 
-export const RentsShow = (props) => (
-    <Show {...props}>
-        <SimpleShowLayout>
-            <TextField source="id" />
-            <DateField source="from" />
-            <DateField source="to" />
-        </SimpleShowLayout>
-    </Show>
+const RentsShowActions = ({ permissions, basePath, data, record, resource }) => {
+    console.log(record);
+    const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
+    return (
+    <TopToolbar>
+        { isMyShop && <EditButton basePath={basePath} record={data} /> }
+    </TopToolbar>
+)};
+
+export const RentsShow = ({permissions, ...props }) => (
+    <ShowController  {...props} >
+        {controllerProps =>
+            <ShowView actions={<RentsShowActions permissions={permissions} record={controllerProps.record} />} {...props} {...controllerProps}>
+                <SimpleShowLayout>
+                    <TextField source="id" />
+
+                    <ReferenceField label="Shop" reference="shops" source="shopId">
+                        <TextField source="name" />
+                    </ReferenceField>
+
+                    <ReferenceField source="customerId" reference="customers">
+                        <TextField source="name" />
+                    </ReferenceField>
+
+                    <DateField source="from" />
+                    <DateField source="to" />
+
+                    <ReferenceArrayField label="Equipment" reference="equipments" source="equipmentIds">
+                        <SingleFieldList>
+                            <ChipField source="name" />
+                        </SingleFieldList>
+                    </ReferenceArrayField>
+
+                    <OrderOrigin equipmentIds={ controllerProps.record ?
+                        controllerProps.record.equipmentIds :
+                        null
+                        } />
+                </SimpleShowLayout>
+            </ShowView>
+        }
+    </ShowController>
 );
 
-const OrderOrigin = ({ formData, ...rest }) => {
-    console.log(formData);
-
-    if (!formData.equipmentIds) {
-        formData.equipmentIds = [];
+const OrderOrigin = ({ equipmentIds, ...rest }) => {
+    if (!equipmentIds) {
+        equipmentIds = [];
     }
 
-    let response = useGetMany('equipments', formData.equipmentIds);
+    let response = useGetMany('equipments', equipmentIds);
 
     if (!response.loaded) {
         return null;
     }
 
     const data = response.data
-    console.log(data);
 
     return (
         <TableContainer component={Paper}>
@@ -83,6 +171,15 @@ export const RentsEdit = (props) => (
     <Edit {...props}>
         <SimpleForm >
             <TextInput disabled source="id" />
+
+            <ReferenceInput
+                source="customerId"
+                reference="customers"
+            // filterToQuery={searchText => ({ name: searchText })}
+            >
+                <AutocompleteInput optionText="name" />
+            </ReferenceInput>
+
             <DateTimeInput source="from" validate={required()} />
             <DateTimeInput source="to" validate={required()} />
 
@@ -91,9 +188,11 @@ export const RentsEdit = (props) => (
             </ReferenceArrayInput>
 
             <FormDataConsumer >
-                {formDataProps => (
-                    <OrderOrigin {...formDataProps} />
-                )}
+                {({ formData }) => {
+                    return (
+                        <OrderOrigin equipmentIds={formData.equipmentIds} />
+                    )
+                }}
             </FormDataConsumer>
 
         </SimpleForm>
@@ -103,6 +202,14 @@ export const RentsEdit = (props) => (
 export const RentsCreate = (props) => (
     <Create {...props}>
         <SimpleForm redirect="list">
+            <ReferenceInput
+                source="customerId"
+                reference="customers"
+            // filterToQuery={searchText => ({ name: searchText })}
+            >
+                <AutocompleteInput optionText="name" />
+            </ReferenceInput>
+
             <DateTimeInput source="from" validate={required()} initialValue={new Date()} />
             <DateTimeInput source="to" validate={required()} initialValue={new Date()} />
 

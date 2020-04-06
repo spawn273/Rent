@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using RentApi.Infrastructure.Database.Models;
 using SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -141,6 +142,14 @@ namespace RentApi.Infrastructure.Database
                 new Customer
                 {
                     Name = "pasha technique"
+                },
+                new Customer
+                {
+                    Name = "sukablat"
+                },
+                new Customer
+                {
+                    Name = "pizdanahui"
                 }
             };
 
@@ -157,7 +166,22 @@ namespace RentApi.Infrastructure.Database
                     Customer = customers[0],
                     From = DateTime.Parse("2020-01-10"),
                     To = DateTime.Parse("2020-02-10"),
-                }
+                },
+                new Rent
+                {
+                    Shop = shops[1],
+                    Employee = employees[1],
+                    Customer = customers[0],
+                    From = DateTime.Parse("2020-01-11"),
+                    To = DateTime.Parse("2020-02-12"),
+                    RentEquipment = new List<RentEquipment>
+                    {
+                        new RentEquipment
+                        {
+                            Equipment = equipment[0]
+                        }
+                    }
+                },
             };
             context.Rent.AddRange(rents);
 
@@ -191,10 +215,10 @@ namespace RentApi.Infrastructure.Database
             await roleManager.CreateAsync(roles[1]);
 
             await userManager.UpdateSecurityStampAsync(users[0]);
-            await userManager.AddToRoleAsync(users[0], "admin");
+            await userManager.AddToRoleAsync(users[0], "employee");
 
             await userManager.UpdateSecurityStampAsync(users[1]);
-            await userManager.AddToRoleAsync(users[1], "employee");
+            await userManager.AddToRoleAsync(users[1], "admin");
         }
     }
 }
