@@ -23,6 +23,7 @@ import {
     TopToolbar, CreateButton, ExportButton, Button, sanitizeListRestProps,
 } from 'react-admin';
 import IconEvent from '@material-ui/icons/Event';
+import { Fragment } from 'react';
 
 
 
@@ -88,7 +89,6 @@ export const RentsList = ({ permissions, ...props }) => {
 };
 
 const RentsShowActions = ({ permissions, basePath, data, record, resource }) => {
-    console.log(record);
     const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
     return (
     <TopToolbar>
@@ -120,17 +120,71 @@ export const RentsShow = ({permissions, ...props }) => (
                         </SingleFieldList>
                     </ReferenceArrayField>
 
-                    <OrderOrigin equipmentIds={ controllerProps.record ?
+                    <RentTable equipmentIds={ controllerProps.record ?
                         controllerProps.record.equipmentIds :
                         null
-                        } />
+                    } />
                 </SimpleShowLayout>
             </ShowView>
         }
     </ShowController>
 );
 
-const OrderOrigin = ({ equipmentIds, ...rest }) => {
+export const RentsEdit = ({permissions, ...props }) => (
+    <Edit {...props}>
+        <SimpleForm >
+            <TextInput disabled source="id" />            
+            <FormDataConsumer >
+                {({ formData: record }) => {
+                    const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
+
+                    return isMyShop && <Fragment>                        
+                        <ReferenceInput source="customerId" reference="customers">
+                            <AutocompleteInput optionText="name" />
+                        </ReferenceInput>
+
+                        <DateTimeInput source="from" validate={required()} />
+                        <DateTimeInput source="to" validate={required()} />
+
+                        <ReferenceArrayInput source="equipmentIds" reference="equipments">
+                            <AutocompleteArrayInput />
+                        </ReferenceArrayInput>
+                        
+                        <DateTimeInput source="from" validate={required()} />
+                        <RentTable equipmentIds={record.equipmentIds} />
+                    </Fragment>
+                }}
+            </FormDataConsumer>
+
+        </SimpleForm>
+    </Edit>
+);
+
+export const RentsCreate = (props) => (
+    <Create {...props}>
+        <SimpleForm redirect="list">
+            <ReferenceInput source="customerId" reference="customers">
+                <AutocompleteInput optionText="name" />
+            </ReferenceInput>
+
+            <DateTimeInput source="from" validate={required()} initialValue={new Date()} />
+            <DateTimeInput source="to" validate={required()} initialValue={new Date()} />
+
+            <ReferenceArrayInput source="equipmentIds" reference="equipments">
+                <AutocompleteArrayInput />
+            </ReferenceArrayInput>
+
+            <FormDataConsumer >
+                {formDataProps => (
+                    <RentTable {...formDataProps} />
+                )}
+            </FormDataConsumer>
+
+        </SimpleForm>
+    </Create>
+);
+
+const RentTable = ({ equipmentIds, ...rest }) => {
     if (!equipmentIds) {
         equipmentIds = [];
     }
@@ -166,63 +220,3 @@ const OrderOrigin = ({ equipmentIds, ...rest }) => {
         </TableContainer>
     );
 };
-
-export const RentsEdit = (props) => (
-    <Edit {...props}>
-        <SimpleForm >
-            <TextInput disabled source="id" />
-
-            <ReferenceInput
-                source="customerId"
-                reference="customers"
-            // filterToQuery={searchText => ({ name: searchText })}
-            >
-                <AutocompleteInput optionText="name" />
-            </ReferenceInput>
-
-            <DateTimeInput source="from" validate={required()} />
-            <DateTimeInput source="to" validate={required()} />
-
-            <ReferenceArrayInput source="equipmentIds" reference="equipments">
-                <AutocompleteArrayInput />
-            </ReferenceArrayInput>
-
-            <FormDataConsumer >
-                {({ formData }) => {
-                    return (
-                        <OrderOrigin equipmentIds={formData.equipmentIds} />
-                    )
-                }}
-            </FormDataConsumer>
-
-        </SimpleForm>
-    </Edit>
-);
-
-export const RentsCreate = (props) => (
-    <Create {...props}>
-        <SimpleForm redirect="list">
-            <ReferenceInput
-                source="customerId"
-                reference="customers"
-            // filterToQuery={searchText => ({ name: searchText })}
-            >
-                <AutocompleteInput optionText="name" />
-            </ReferenceInput>
-
-            <DateTimeInput source="from" validate={required()} initialValue={new Date()} />
-            <DateTimeInput source="to" validate={required()} initialValue={new Date()} />
-
-            <ReferenceArrayInput source="equipmentIds" reference="equipments">
-                <AutocompleteArrayInput />
-            </ReferenceArrayInput>
-
-            <FormDataConsumer >
-                {formDataProps => (
-                    <OrderOrigin {...formDataProps} />
-                )}
-            </FormDataConsumer>
-
-        </SimpleForm>
-    </Create>
-);
