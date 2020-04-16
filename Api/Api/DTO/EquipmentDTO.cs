@@ -13,6 +13,7 @@ namespace RentApi.Api.DTO
         public int ShopId { get; set; }
         public int EquipmentTypeId { get; set; }
 
-        public int Price { get; set; }
+        public int PricePerHour { get; set; }
+        public int PricePerDay { get; set; }
     }
 }

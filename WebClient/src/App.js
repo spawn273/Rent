@@ -12,6 +12,9 @@ import customRoutes from './customRoutes';
 import shopReducer from './shopReducer';
 import myDataProvider from './DataProvider';
 import authProvider from './authProvider';
+import polyglotI18nProvider from 'ra-i18n-polyglot';
+import russianMessages from 'ra-language-russian';
+
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -27,8 +30,49 @@ const Wrapper1 = (props) => {
 //     return ({children})
 // };
 
+const resources = {
+    rents: {
+        name: 'Аренда |||| Аренды',
+        fields: {
+            customer: 'Клиент',
+            from: "Дата выдачи",
+            to: "Дата возврата",
+            shopId: "Магазин",
+            equipmentIds: "Оборудование",
+        },
+    },
+    equipments: {
+        name: 'Оборудование |||| Оборудование',
+        fields: {
+            name: 'Наименование',
+            pricePerDay: 'Цена за день',
+            pricePerHour: 'Цена за час',
+            shopId: 'Магазин',
+            equipmentTypeId: 'Тип оборудования',
+        },
+    },
+}
+
+// const messages = {
+//     ra: { ...russianMessages.ra, ...rum },
+// };
+
+const messages = {
+    ra: { ...russianMessages.ra},
+    resources: resources,
+};
+
+const i18nProvider = polyglotI18nProvider(() => messages, 'ru');
+
+console.log("asd");
+const asd = (() => {
+    console.log("zxc");
+    return 1;
+})()
+
 const App = () => (
-    <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} dataProvider={myDataProvider} authProvider={authProvider}>
+    <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} 
+        dataProvider={myDataProvider} authProvider={authProvider} i18nProvider={i18nProvider}>
 
         <Resource name="shops" list={ShopsList} />
         <Resource name="rents" list={RentsList} edit={RentsEdit} show={RentsShow} create={RentsCreate}/>

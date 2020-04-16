@@ -11,9 +11,9 @@ namespace RentApi.Api.Extensions
             return rents.Select(x => new RentDTO
             {
                 Id = x.Id,
+                Customer = x.Customer,
                 ShopId = x.ShopId,
                 EmployeeId = x.EmployeeId,
-                CustomerId = x.CustomerId,
                 From = x.From,
                 To = x.To,
                 EquipmentIds = x.RentEquipment.Select(x => x.EquipmentId).ToArray()
@@ -28,7 +28,8 @@ namespace RentApi.Api.Extensions
                 Name = x.Name,
                 ShopId = x.ShopId,
                 EquipmentTypeId = x.EquipmentTypeId,
-                Price = x.EquipmentType.Price
+                PricePerHour = x.EquipmentType.PricePerHour,
+                PricePerDay = x.EquipmentType.PricePerDay
             });
         }
     }

@@ -93,7 +93,7 @@ namespace SmartAnalytics.BASF.Backend.Application.Authorization
 
             user = new User
             {
-                Name = request.Name,
+                FirstName = request.Name,
                 Email = request.Email,
                 UserName = request.Email
             };

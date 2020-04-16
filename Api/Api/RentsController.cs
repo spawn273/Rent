@@ -81,7 +81,7 @@ namespace RentApi.Api
                 return NotFound();
             }
 
-            entity.CustomerId = rent.CustomerId;
+            entity.Customer = rent.Customer;
             entity.From = rent.From;
             entity.To = rent.To;
             entity.RentEquipment = rent.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList();
@@ -97,7 +97,7 @@ namespace RentApi.Api
             var rent = new Rent
             {
                 EmployeeId = HttpContext.GetEmployeeId(),
-                CustomerId = dto.CustomerId,
+                Customer = dto.Customer,
                 ShopId = HttpContext.GetShopId(),
                 From = dto.From,
                 To = dto.To,

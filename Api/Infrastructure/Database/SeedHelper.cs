@@ -46,14 +46,14 @@ namespace RentApi.Infrastructure.Database
             {
                 new User
                 {
-                    Name = "vova",
+                    FirstName = "vova",
                     UserName = "vova228@mail.ru",
                     Email = "vova228@mail.ru",
                     EmailConfirmed = true
                 },
                 new User
                 {
-                    Name = "dima",
+                    FirstName = "dima",
                     UserName = "dima420@mail.ru",
                     Email = "dima420@mail.ru",
                     EmailConfirmed = true
@@ -108,7 +108,8 @@ namespace RentApi.Infrastructure.Database
                     EquipmentType = new EquipmentType
                     {
                         Name = "руки",
-                        Price = 100
+                        PricePerHour = 100,
+                        PricePerDay = 1000,
                     }
                 },
                 new Equipment
@@ -118,7 +119,8 @@ namespace RentApi.Infrastructure.Database
                     EquipmentType = new EquipmentType
                     {
                         Name = "локти",
-                        Price = 100
+                        PricePerHour = 100,
+                        PricePerDay = 1000,
                     }
                 },
                 new Equipment
@@ -128,7 +130,8 @@ namespace RentApi.Infrastructure.Database
                     EquipmentType = new EquipmentType
                     {
                         Name = "ноги",
-                        Price = 500
+                        PricePerHour = 500,
+                        PricePerDay = 5000
                     }
                 }
             };
@@ -137,23 +140,23 @@ namespace RentApi.Infrastructure.Database
 
             // Customers
 
-            var customers = new Customer[]
-            {
-                new Customer
-                {
-                    Name = "pasha technique"
-                },
-                new Customer
-                {
-                    Name = "sukablat"
-                },
-                new Customer
-                {
-                    Name = "pizdanahui"
-                }
-            };
+            //var customers = new Customer[]
+            //{
+            //    new Customer
+            //    {
+            //        User = users[0]
+            //    },
+            //    new Customer
+            //    {
+            //        User = users[1]
+            //    },
+            //    new Customer
+            //    {
+            //        Name = "pizdanahui"
+            //    }
+            //};
 
-            context.Customer.AddRange(customers);
+            //context.Customer.AddRange(customers);
 
             // Rents
 
@@ -163,15 +166,23 @@ namespace RentApi.Infrastructure.Database
                 {
                     Shop = shops[0],
                     Employee = employees[0],
-                    Customer = customers[0],
+                    Customer = "Жоран",
                     From = DateTime.Parse("2020-01-10"),
                     To = DateTime.Parse("2020-02-10"),
                 },
                 new Rent
                 {
+                    Shop = shops[0],
+                    Employee = employees[0],
+                    Customer = "Степан",
+                    From = DateTime.Parse("2019-01-10"),
+                    To = DateTime.Parse("2021-02-10"),
+                },
+                new Rent
+                {
                     Shop = shops[1],
                     Employee = employees[1],
-                    Customer = customers[0],
+                    Customer = "Пашок",
                     From = DateTime.Parse("2020-01-11"),
                     To = DateTime.Parse("2020-02-12"),
                     RentEquipment = new List<RentEquipment>
