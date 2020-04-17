@@ -72,7 +72,8 @@ const custom = {
             close: "Завершить"
         },
         table: {
-            type: "Тип"
+            type: "Тип",
+            total: 'Итого',
         }
     }
 }

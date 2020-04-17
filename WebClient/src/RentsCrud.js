@@ -7,7 +7,6 @@ import { FieldArray } from 'react-final-form-arrays'
 import MUIDataTable from "mui-datatables";
 import { useSelector, useDispatch } from 'react-redux';
 
-
 import { makeStyles, Chip } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -28,6 +27,13 @@ import {
 import IconEvent from '@material-ui/icons/Event';
 import { Fragment } from 'react';
 import { useFormState } from 'react-final-form'
+
+var moment = require('moment');
+
+// TODO:
+// +1hour +1day
+// close form
+
 
 const ListActions = ({
     create,
@@ -276,6 +282,7 @@ const RentTable = ({ record }) => {
         return true;
     }
 
+    // todo: loading vs loaded?
     const loaded = equipmentIds.length == 0 || eqRequest.loaded && typesRequest.loaded && allLoaded(eqRequest.data) && allLoaded(typesRequest.data);
     if (!loaded) {
         return null;
@@ -283,6 +290,13 @@ const RentTable = ({ record }) => {
 
     let types = typesRequest.data.reduce(function(acc, cur, i) {
         acc[cur.id] = cur;
+        return acc;
+    }, {});
+
+    let total = 0;
+    const eqPrice = eqRequest.data.reduce(function(acc, cur, i) {
+        acc[cur.id] = price(types[cur.id], record.from, record.to);
+        total += acc[cur.id];
         return acc;
     }, {});
 
@@ -296,6 +310,7 @@ const RentTable = ({ record }) => {
                         <TableCell>{translate('resources.equipments.fields.name')}</TableCell>
                         <TableCell>{translate('resources.equipments.fields.pricePerHour')}</TableCell>
                         <TableCell>{translate('resources.equipments.fields.pricePerDay')}</TableCell>
+                        <TableCell>{translate('custom.rents.table.total')}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -306,10 +321,40 @@ const RentTable = ({ record }) => {
                             <TableCell>{row.name}</TableCell>
                             <TableCell>{types[row.equipmentTypeId] ? types[row.equipmentTypeId].pricePerHour : ""}</TableCell>
                             <TableCell>{types[row.equipmentTypeId] ? types[row.equipmentTypeId].pricePerDay : ""}</TableCell>
+                            <TableCell>{eqPrice[row.id]}</TableCell>
                         </TableRow>
                     ))}
+                    <TableRow>
+                        <TableCell/>
+                        <TableCell/>
+                        <TableCell/>
+                        <TableCell/>
+                        <TableCell/>
+                            <TableCell><b>{total}</b></TableCell>
+                    </TableRow>
                 </TableBody>
             </Table>
         </TableContainer>
     );
+};
+
+const price = (type, from, to) => {
+    var price = 0;
+    if (type && from && to) {
+        from = moment(from);
+        to = moment(to)
+        if (to > from) {
+            let hours = Math.round(to.diff(from, 'hours', true))
+            if (hours < 6) {
+                price = hours * type.pricePerHour;
+            } else {
+                let days = to.diff(from, 'days');
+                if (days == 0) {
+                    days = 1;
+                }
+                price = days * type.pricePerDay;
+            }
+        }
+    }
+    return price;
 };
