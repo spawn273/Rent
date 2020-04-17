@@ -16,6 +16,8 @@ namespace RentApi.Api.Extensions
                 EmployeeId = x.EmployeeId,
                 From = x.From,
                 To = x.To,
+                Closed = x.Closed,
+                Payment = x.Payment,
                 EquipmentIds = x.RentEquipment.Select(x => x.EquipmentId).ToArray()
             });
         }
@@ -28,8 +30,6 @@ namespace RentApi.Api.Extensions
                 Name = x.Name,
                 ShopId = x.ShopId,
                 EquipmentTypeId = x.EquipmentTypeId,
-                PricePerHour = x.EquipmentType.PricePerHour,
-                PricePerDay = x.EquipmentType.PricePerDay
             });
         }
     }

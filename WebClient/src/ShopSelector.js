@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useGetList, useGetOne, Loading, Error } from 'react-admin';
+import { useGetList, useTranslate, useGetOne, Loading, Error } from 'react-admin';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { changeShop } from './actions'
@@ -8,6 +8,8 @@ import { changeShop } from './actions'
 const ShopSelector = props => {
     const shop = useSelector((state) => state.shop);
     const dispatch = useDispatch();
+
+    const translate = useTranslate();
 
     const { data, ids, loading, error } = useGetList(
         'shops',
@@ -21,7 +23,7 @@ const ShopSelector = props => {
 
     return (
         <span>
-            Shop:
+            {`${translate('custom.shopSelector')}: `}
             <Select
                 value={shop}
                 onChange={event => dispatch(changeShop(event.target.value))}

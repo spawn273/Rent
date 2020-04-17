@@ -38,6 +38,11 @@ namespace RentApi.Infrastructure.Database
                .Entity<Rent>()
                .Property(x => x.To)
                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+            modelBuilder
+               .Entity<Rent>()
+               .Property(x => x.Closed)
+               .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
         }
     }
 }

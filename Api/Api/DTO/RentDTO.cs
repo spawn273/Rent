@@ -14,6 +14,8 @@ namespace RentApi.Api.DTO
         public int EmployeeId { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
+        public DateTime? Closed { get; set; }
+        public int? Payment { get; set; }
 
         public ICollection<int> EquipmentIds { get; set; }
     }

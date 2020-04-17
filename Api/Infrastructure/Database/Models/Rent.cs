@@ -11,6 +11,8 @@ namespace RentApi.Infrastructure.Database.Models
         public int ShopId { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
+        public DateTime? Closed { get; set; }
+        public int? Payment { get; set; }
 
         public Employee Employee { get; set; }
         public Shop Shop { get; set; }

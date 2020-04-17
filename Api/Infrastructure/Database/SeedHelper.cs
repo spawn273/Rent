@@ -169,6 +169,8 @@ namespace RentApi.Infrastructure.Database
                     Customer = "Жоран",
                     From = DateTime.Parse("2020-01-10"),
                     To = DateTime.Parse("2020-02-10"),
+                    Closed = DateTime.Parse("2020-02-11"),
+                    Payment = 5000
                 },
                 new Rent
                 {

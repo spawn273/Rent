@@ -36,9 +36,11 @@ const resources = {
         fields: {
             customer: 'Клиент',
             from: "Дата выдачи",
-            to: "Дата возврата",
+            to: "Дата возврата (договор)",
+            closed: "Дата возврата (факт)",
             shopId: "Магазин",
             equipmentIds: "Оборудование",
+            payment: "Оплата"
         },
     },
     equipments: {
@@ -51,6 +53,28 @@ const resources = {
             equipmentTypeId: 'Тип оборудования',
         },
     },
+    equipmentTypes: {
+        name: 'Тип оборудования |||| Тип оборудования',
+        fields: {
+            name: 'Наименование',
+        },
+    },
+}
+
+const custom = {
+    shopSelector: "Магазин",
+    rents: {
+        filters: {
+            closed: "Закрытые",
+            today: "Возврат сегодня",
+        },
+        show: {
+            close: "Завершить"
+        },
+        table: {
+            type: "Тип"
+        }
+    }
 }
 
 // const messages = {
@@ -60,15 +84,10 @@ const resources = {
 const messages = {
     ra: { ...russianMessages.ra},
     resources: resources,
+    custom: custom
 };
 
 const i18nProvider = polyglotI18nProvider(() => messages, 'ru');
-
-console.log("asd");
-const asd = (() => {
-    console.log("zxc");
-    return 1;
-})()
 
 const App = () => (
     <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} 

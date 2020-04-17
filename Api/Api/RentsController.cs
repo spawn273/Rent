@@ -84,6 +84,8 @@ namespace RentApi.Api
             entity.Customer = rent.Customer;
             entity.From = rent.From;
             entity.To = rent.To;
+            entity.Closed = rent.Closed;
+            entity.Payment = rent.Payment;
             entity.RentEquipment = rent.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList();
 
             await _context.SaveChangesAsync();
@@ -101,6 +103,8 @@ namespace RentApi.Api
                 ShopId = HttpContext.GetShopId(),
                 From = dto.From,
                 To = dto.To,
+                Closed = null,
+                Payment = dto.Payment,
                 RentEquipment = dto.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList()
             };
             _context.Rent.Add(rent);
