@@ -18,6 +18,7 @@ namespace RentApi.Api.Extensions
                 To = x.To,
                 Closed = x.Closed,
                 Payment = x.Payment,
+                Comment = x.Comment,
                 EquipmentIds = x.RentEquipment.Select(x => x.EquipmentId).ToArray()
             });
         }

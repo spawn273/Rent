@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,8 @@ using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 using SmartAnalytics.BASF.Backend.Infrastructure;
+using System.Linq.Dynamic.Core;
+using RentApi.Application;
 
 namespace RentApi.Api
 {
@@ -24,9 +27,23 @@ namespace RentApi.Api
             _context = context;
         }
 
+        public enum Order
+        {
+            ASC,
+            DESC
+        }
+        public static object GetPropValue(object src, string propName)
+        {
+            return src.GetType().GetProperty(propName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance).GetValue(src, null);
+        }
+
         // GET: api/Rents
         [HttpGet]
-        public async Task<ActionResult<RentDTO[]>> GetRents(int? shopId)
+        public async Task<ActionResult<RentDTO[]>> GetRents(int? shopId,
+            int _start = 0, int _end = 10, 
+            string _sort = "id", string _order = "ASC",
+            bool opened = false, DateTime? endLte = null
+            )
         {
             var query = _context.Rent.AsQueryable();
 
@@ -35,10 +52,26 @@ namespace RentApi.Api
                 query = query.Where(x => x.ShopId == shopId);
             }
 
+            if (opened)
+            {
+                query = query.Where(x => x.Closed == null);
+            }
+
+            if (endLte != null)
+            {
+                query = query.Where(x => x.To < endLte.Value.Ceil(TimeSpan.FromDays(1)).ToUniversalTime());
+            }
+
+            var count = await query.CountAsync();
+            SetTotalCount(count);
+
+            query = query.Skip(_start)
+                .Take(_end - _start)
+                .OrderBy($"{_sort} {_order}");
+
             var result = await query.ToDTO()
                 .ToArrayAsync();
 
-            SetTotalCount(result.Length);
             return result;
         }
 
@@ -86,6 +119,7 @@ namespace RentApi.Api
             entity.To = rent.To;
             entity.Closed = rent.Closed;
             entity.Payment = rent.Payment;
+            entity.Comment = rent.Comment;
             entity.RentEquipment = rent.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList();
 
             await _context.SaveChangesAsync();
@@ -105,6 +139,7 @@ namespace RentApi.Api
                 To = dto.To,
                 Closed = null,
                 Payment = dto.Payment,
+                Comment = dto.Comment,
                 RentEquipment = dto.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList()
             };
             _context.Rent.Add(rent);

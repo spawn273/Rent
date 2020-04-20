@@ -170,7 +170,8 @@ namespace RentApi.Infrastructure.Database
                     From = DateTime.Parse("2020-01-10"),
                     To = DateTime.Parse("2020-02-10"),
                     Closed = DateTime.Parse("2020-02-11"),
-                    Payment = 5000
+                    Payment = 5000,
+                    Comment = "пидрбля"
                 },
                 new Rent
                 {
@@ -182,9 +183,17 @@ namespace RentApi.Infrastructure.Database
                 },
                 new Rent
                 {
+                    Shop = shops[0],
+                    Employee = employees[0],
+                    Customer = "Пашок",
+                    From = DateTime.Parse("2019-01-10"),
+                    To = DateTime.UtcNow
+                },
+                new Rent
+                {
                     Shop = shops[1],
                     Employee = employees[1],
-                    Customer = "Пашок",
+                    Customer = "Сашок",
                     From = DateTime.Parse("2020-01-11"),
                     To = DateTime.Parse("2020-02-12"),
                     RentEquipment = new List<RentEquipment>

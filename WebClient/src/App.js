@@ -40,7 +40,8 @@ const resources = {
             closed: "Дата возврата (факт)",
             shopId: "Магазин",
             equipmentIds: "Оборудование",
-            payment: "Оплата"
+            payment: "Оплата",
+            comment: "Комментарий"
         },
     },
     equipments: {
@@ -65,7 +66,7 @@ const custom = {
     shopSelector: "Магазин",
     rents: {
         filters: {
-            closed: "Закрытые",
+            opened: "Открытые",
             today: "Возврат сегодня",
         },
         show: {

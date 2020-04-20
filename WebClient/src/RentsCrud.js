@@ -1,5 +1,5 @@
 import React from 'react';
-import { SearchInput, translate, SaveButton, Toolbar,useUpdate, NumberInput, NumberField, ShowController, BooleanInput, useTranslate, ShowView, usePermissions, Create, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
+import { SearchInput, translate, RichTextField, SaveButton, Toolbar,useUpdate, NumberInput, NumberField, ShowController, BooleanInput, useTranslate, ShowView, usePermissions, Create, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
 
 import { Form, Field } from 'react-final-form'
 import arrayMutators from 'final-form-arrays'
@@ -23,7 +23,8 @@ import compose from 'recompose/compose';
 import { Link } from 'react-router-dom';
 import { stringify } from 'query-string';
 
-import { cloneElement, useMemo } from 'react';
+import { cloneElement, useMemo, useCallback  } from 'react';
+import { useForm } from 'react-final-form';
 import PropTypes from 'prop-types';
 import {
     TopToolbar, Filter, CreateButton, ExportButton, Button, sanitizeListRestProps,
@@ -53,6 +54,8 @@ const ListActions = ({
     filterValues,
     permanentFilter,
     hasCreate, // you can hide CreateButton if hasCreate = false
+    hasList,
+    hasEdit,
     hasShow,
     basePath,
     selectedIds,
@@ -63,7 +66,7 @@ const ListActions = ({
     ...rest
 }) => {
     return (
-        <TopToolbar className={className} {...rest}>
+        <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
             {filters && cloneElement(filters, {
                 resource,
                 showFilter,
@@ -105,7 +108,7 @@ const QuickFilter = ({ label }) => {
 const PostFilter = (props) => (
     <Filter {...props}>
         <SearchInput source="q" alwaysOn />
-        <BooleanInput label="custom.rents.filters.closed" source="closed" alwaysOn />
+        <BooleanInput label="custom.rents.filters.opened" source="opened" alwaysOn />
         <BooleanInput label="custom.rents.filters.today" source="endLte" alwaysOn
             parse={v => v ? new Date().toISOString() : null} format={v => v ? true : false} />
     </Filter>
@@ -130,19 +133,13 @@ export const RentsList = ({ permissions, ...props }) => {
                     <ChipField source="name" />
                 </SingleFieldList>
             </ReferenceArrayField>
+
+            <TextField source="comment" />
         </Datagrid>
     </List>
 };
 
-
 // Show
-
-const styles = {
-    drawerContent: {
-        width: 300
-    }
-};
-
 
 const ShowActions = ({ permissions, basePath, data, record, resource }) => {
     const loaded = data != null;
@@ -163,12 +160,12 @@ const CloseButton = ({ record }) => {
 };
 
 const handleClose = ({history}) => {
-    console.log(history)
     history.goBack();
-    // history.push('/tags');
 };
 
-export const RentsShow = ({ permissions, classes, ...props }) => (
+export const RentsShow = ({ permissions, classes, ...props }) => {
+    const styles = closeStyles()
+    return(
     <Fragment>
         <ShowController  {...props} >
             {controllerProps =>
@@ -187,6 +184,8 @@ export const RentsShow = ({ permissions, classes, ...props }) => (
                         <DateField showTime source="closed" />
                         <NumberField source="payment" />
 
+                        <RichTextField source="comment"/>
+
                         <ReferenceArrayField reference="equipments" source="equipmentIds" >
                             <SingleFieldList>
                                 <ChipField source="name" />
@@ -199,15 +198,14 @@ export const RentsShow = ({ permissions, classes, ...props }) => (
             }
         </ShowController>
         <Route path="/rents/:id/show/close">
-            {/* {console.log(props)} */}
             {({ match }) => (
                 <Drawer
                     open={!!match}
                     anchor="right"
-                    // onClose={handleClose(props)}
+                    onClose={() => handleClose(props)}
                 >
                     <CloseForm
-                        // className={classes.drawerContent}
+                        className={styles.close}
                         onCancel={() => handleClose(props)}
                         {...props}
                     />
@@ -215,91 +213,82 @@ export const RentsShow = ({ permissions, classes, ...props }) => (
             )}
         </Route>
     </Fragment>
-);
+)};
+
+const CloseFormSaveButton = ({ handleSubmitWithRedirect, ...props }) => {
+    const form = useForm();
+
+    const handleClick = useCallback(() => {
+        const closed = form.getFieldState('_closed');
+        form.change('closed', closed.value);
+        handleSubmitWithRedirect('show');
+    }, [form]);
+
+    return <SaveButton {...props} handleSubmitWithRedirect={handleClick} />;
+};
 
 const CloseFormToolbar = ({ onCancel, ...props }) => (
     <Toolbar {...props}>
-        <SaveButton />
+        <CloseFormSaveButton />
         <Button label='ra.action.close' onClick={onCancel}></Button>
     </Toolbar>
 );
 
+const closeStyles = makeStyles({
+    close: {
+        width: 500
+    }
+});
+
 const CloseForm = ({ onCancel, ...props }) => (
-    <Edit {...props}>
-        <SimpleForm initialValues={{closed: new Date('2014-04-03')}} toolbar={<CloseFormToolbar onCancel={onCancel} />}>
-            <DateTimeInput source="closed" defaultValue={new Date('2014-04-03')} />
-            {/* <FormDataConsumer >
-                {(props) => {
-                    console.log(props)
-                    return null;
-                }}
-            </FormDataConsumer> */}
-            {/* <FormDataConsumer >
-                {({ formData: record, ...props }) => {
-                    console.log(record)
-                    return <DateTimeInput source="closed" validate={required()} initialValue={new Date()} />
-                }}
-            </FormDataConsumer> */}
+    <Edit {...props} hasShow={false}>
+        <SimpleForm toolbar={<CloseFormToolbar onCancel={onCancel} />}>
+            <DateTimeInput label="resources.rents.fields.closed" source="_closed" defaultValue={new Date()}/>
+            <TextInput multiline source="comment" />
         </SimpleForm>
-        {/* <SimpleForm>
-            <TextInput source="name" validate={required()} />
-        </SimpleForm> */}
     </Edit>
 );
 
+// Edit
+
+const MyShopOnly = ({children, ...props}) => { 
+    const { loading, permissions } = usePermissions();
+    const isMyShop = props.record && permissions && permissions.isMyShop(props.record.shopId);
+    // TODO: children can be null
+    const result = React.cloneElement(children, { ...props });
+    return isMyShop ? result : null
+};
+
 export const RentsEdit = ({ permissions, ...props }) => {
     return (
-        <Edit {...props}>
-            <SimpleForm >
-                <TextInput disabled source="id" />
-                <FormDataConsumer >
-                    {({ formData: record, ...props }) => {
-                        const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
-                        return isMyShop && <TextInput {...props} source="customer" validate={required()} />
-                    }}
-                </FormDataConsumer>
-                <FormDataConsumer >
-                    {({ formData: record, ...props }) => {
-                        const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
-                        return isMyShop && <DateTimeInput {...props} source="from" validate={required()} />
-                    }}
-                </FormDataConsumer>
-                <FormDataConsumer >
-                    {({ formData: record, ...props }) => {
-                        const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
-                        return isMyShop && <DateTimeInput {...props} source="to" validate={required()} />
-                    }}
-                </FormDataConsumer>
-                <FormDataConsumer >
-                    {({ formData: record, ...props }) => {
-                        const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
-                        return isMyShop && <DateTimeInput {...props} source="closed" />
-                    }}
-                </FormDataConsumer>
-                <FormDataConsumer >
-                    {({ formData: record, ...props }) => {
-                        const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
-                        return isMyShop && <NumberInput {...props} source="payment" />
-                    }}
-                </FormDataConsumer>
-                <FormDataConsumer >
-                    {({ formData: record, ...props }) => {
-                        const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
-                        return isMyShop && <ReferenceArrayInput {...props} source="equipmentIds" reference="equipments">
-                            <AutocompleteArrayInput />
-                        </ReferenceArrayInput>
-                    }}
-                </FormDataConsumer>
-                <FormDataConsumer >
-                    {({ formData: record }) => {
-                        const isMyShop = record && permissions && permissions.isMyShop(record.shopId);
-                        return isMyShop && <RentTable record={record} />
-                    }}
-                </FormDataConsumer>
-            </SimpleForm>
+        <Edit {...props} undoable={false} >
+            <MyShopOnly>
+                <SimpleForm >
+                    <TextInput disabled source="id" />
+                    <TextInput  source="customer" validate={required()} />
+                    <DateTimeInput {...props} source="from" validate={required()} />
+                    <DateTimeInput {...props} source="to" validate={required()} />
+                    <DateTimeInput {...props} source="closed" />
+                    <NumberInput {...props} source="payment" />
+                    <TextInput {...props} multiline source="comment" />
+
+                    <ReferenceArrayInput source="equipmentIds" reference="equipments">
+                        <AutocompleteArrayInput />
+                    </ReferenceArrayInput>
+                                        
+                    <FormDataConsumer >
+                        {formDataProps => (
+                            <RentTable record={formDataProps.formData} />
+                        )}
+                    </FormDataConsumer>
+
+                </SimpleForm>
+            </MyShopOnly>
         </Edit>
     )
 };
+
+// Create
 
 export const RentsCreate = (props) => (
     <Create {...props}>
@@ -309,6 +298,7 @@ export const RentsCreate = (props) => (
             <DateTimeInput source="from" validate={required()} initialValue={new Date()} />
             <DateTimeInput source="to" validate={required()} initialValue={new Date()} />
             <NumberInput source="payment" />
+            <TextInput multiline source="comment" />
 
             <ReferenceArrayInput source="equipmentIds" reference="equipments">
                 <AutocompleteArrayInput />
@@ -326,8 +316,8 @@ export const RentsCreate = (props) => (
 
 
 
-const RentTable = ({ record }) => {
-
+const RentTable = (props) => {
+    let record = props.record
     let equipmentIds = record.equipmentIds;
     if (!equipmentIds) {
         equipmentIds = [];
@@ -432,11 +422,3 @@ const price = (type, from, to) => {
     }
     return price;
 };
-
-export default compose(
-    connect(
-        undefined,
-        { push }
-    ),
-    withStyles(styles)
-)(RentsShow);

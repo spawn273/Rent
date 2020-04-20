@@ -41,8 +41,8 @@ const authProvider = {
     getPermissions: () => {
         const permissions = JSON.parse(localStorage.getItem('permissions'));
         const perm = {
+            ...permissions,
             isMyShop: (shopId) => {
-                console.log(shopId == permissions.shop);
                 return shopId == permissions.shop;
             }
         };
