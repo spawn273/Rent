@@ -14,6 +14,7 @@ import myDataProvider from './DataProvider';
 import authProvider from './authProvider';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import russianMessages from 'ra-language-russian';
+import EmployeeInfo from './EmployeeInfo';
 
 
 import { useSelector, useDispatch } from 'react-redux';

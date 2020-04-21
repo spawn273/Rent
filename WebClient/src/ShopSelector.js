@@ -19,7 +19,7 @@ const ShopSelector = props => {
 
     // if (loading) return <Loading />;
     if (error) return <Error />;
-    if (!data) return null;
+    if (loading) return null;
 
     return (
         <span>

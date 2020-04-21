@@ -28,8 +28,8 @@ const MyAppBar = props => {
                 className={classes.title}
                 id="react-admin-title"
             />
-            <ShopSelector/>
             <EmployeeInfo/>
+            <ShopSelector/>
             <span className={classes.spacer} />
         </AppBar>
     );

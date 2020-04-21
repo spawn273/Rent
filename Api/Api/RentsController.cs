@@ -42,7 +42,8 @@ namespace RentApi.Api
         public async Task<ActionResult<RentDTO[]>> GetRents(int? shopId,
             int _start = 0, int _end = 10, 
             string _sort = "id", string _order = "ASC",
-            bool opened = false, DateTime? endLte = null
+            bool opened = false, DateTime? endLte = null,
+            string q = ""
             )
         {
             var query = _context.Rent.AsQueryable();
@@ -62,14 +63,19 @@ namespace RentApi.Api
                 query = query.Where(x => x.To < endLte.Value.Ceil(TimeSpan.FromDays(1)).ToUniversalTime());
             }
 
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                query = query.Where(x => EF.Functions.ILike(x.Customer, $"%{q}%") || EF.Functions.ILike(x.Comment, $"%{q}%"));
+            }
+
             var count = await query.CountAsync();
             SetTotalCount(count);
 
-            query = query.Skip(_start)
+            var result = await query
+                .Skip(_start)
                 .Take(_end - _start)
-                .OrderBy($"{_sort} {_order}");
-
-            var result = await query.ToDTO()
+                .OrderBy($"{_sort} {_order}")
+                .ToDTO()
                 .ToArrayAsync();
 
             return result;

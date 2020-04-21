@@ -94,17 +94,6 @@ ListActions.defaultProps = {
     onUnselectItems: () => null,
 };
 
-const useQuickFilterStyles = makeStyles(theme => ({
-    chip: {
-        marginBottom: theme.spacing(1),
-    },
-}));
-const QuickFilter = ({ label }) => {
-    const translate = useTranslate();
-    const classes = useQuickFilterStyles();
-    return <Chip className={classes.chip} label={translate(label)} />;
-};
-
 const PostFilter = (props) => (
     <Filter {...props}>
         <SearchInput source="q" alwaysOn />
@@ -117,7 +106,7 @@ const PostFilter = (props) => (
 export const RentsList = ({ permissions, ...props }) => {
     const shop = useSelector((state) => state.shop);
     const isMyShop = permissions && permissions.isMyShop(shop);
-    return <List {...props} filters={<PostFilter />} filterDefaultValues={{ endLte: Date.UTC() }}
+    return <List {...props} filters={<PostFilter />} 
         actions={<ListActions create={isMyShop} {...props} />}
         filter={{ shopId: shop }}>
         <Datagrid rowClick="show">

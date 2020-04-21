@@ -17,7 +17,7 @@ namespace RentApi
         {
             var host = CreateHostBuilder(args).Build();
 
-            SeedHelper.AutoSeed(host.Services);
+            //SeedHelper.AutoSeed(host.Services);
 
             host.Run();
         }
