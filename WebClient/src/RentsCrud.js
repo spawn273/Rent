@@ -1,5 +1,5 @@
 import React from 'react';
-import { SearchInput, translate, RichTextField, SaveButton, Toolbar,useUpdate, NumberInput, NumberField, ShowController, BooleanInput, useTranslate, ShowView, usePermissions, Create, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
+import { SearchInput, translate, RichTextField, SaveButton, Loading, Toolbar,useUpdate, NumberInput, NumberField, ShowController, BooleanInput, useTranslate, ShowView, usePermissions, Create, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, useGetMany, ArrayInput, CheckboxGroupInput, ReferenceInput, AutocompleteInput, SelectInput, FormDataConsumer, AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, SimpleFormIterator, required, List, Show, Edit, SimpleForm, TextInput, DateTimeInput, ReferenceManyField, EditButton, SimpleShowLayout, Datagrid, TextField, DateField } from 'react-admin';
 
 import { Form, Field } from 'react-final-form'
 import arrayMutators from 'final-form-arrays'
@@ -103,13 +103,21 @@ const PostFilter = (props) => (
     </Filter>
 );
 
+// TODO: remove or try make fixed headers
+const listStyles = makeStyles({
+    headerCell: {
+        width: '100px'
+    },
+});
+
 export const RentsList = ({ permissions, ...props }) => {
+    const classes = listStyles();
     const shop = useSelector((state) => state.shop);
     const isMyShop = permissions && permissions.isMyShop(shop);
     return <List {...props} filters={<PostFilter />} 
         actions={<ListActions create={isMyShop} {...props} />}
         filter={{ shopId: shop }}>
-        <Datagrid rowClick="show">
+        <Datagrid optimized classes={{ headerCell: classes.headerCell }}  rowClick="show">
             <TextField source="id" />
             <TextField source="customer" />
             <DateField showTime source="from" />
@@ -338,7 +346,8 @@ const RentTable = (props) => {
     // todo: loading vs loaded?
     const loaded = equipmentIds.length == 0 || eqRequest.loaded && typesRequest.loaded && allLoaded(eqRequest.data) && allLoaded(typesRequest.data);
     if (!loaded) {
-        return null;
+        return <Loading />;
+        // return null;
     }
 
     let types = typesRequest.data.reduce(function (acc, cur, i) {
