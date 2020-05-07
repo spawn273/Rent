@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RentApi.Api.DTO;
+using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 using System.Collections.Generic;
@@ -28,10 +30,11 @@ namespace RentApi.Api
         }
 
         [HttpGet("many")]
-        public async Task<ActionResult<IEnumerable<EquipmentType>>> GetMany([FromQuery] int[] id)
+        public async Task<ActionResult<IEnumerable<EquipmentTypeDTO>>> GetMany([FromQuery] int[] id)
         {
             var result = await _context.EquipmentType
                 .Where(x => id.Contains(x.Id))
+                .ToDTO()
                 .ToArrayAsync();
 
             return result;
@@ -39,9 +42,11 @@ namespace RentApi.Api
 
         // GET: api/EquipmentTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<EquipmentType>> GetEquipmentType(int id)
+        public async Task<ActionResult<EquipmentTypeDTO>> GetEquipmentType(int id)
         {
-            var equipmentType = await _context.EquipmentType.FindAsync(id);
+            var equipmentType = await _context.EquipmentType.Where(x => x.Id == id)
+                .ToDTO()
+                .FirstOrDefaultAsync();
 
             if (equipmentType == null)
             {
@@ -51,51 +56,42 @@ namespace RentApi.Api
             return equipmentType;
         }
 
-        // PUT: api/EquipmentTypes/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEquipmentType(int id, EquipmentType equipmentType)
+        public async Task<ActionResult<EquipmentTypeDTO>> PutEquipmentType(int id, EquipmentTypeDTO equipmentType)
         {
-            if (id != equipmentType.Id)
+            var entity = await _context.EquipmentType.FirstOrDefaultAsync(x => x.Id == id);
+            if (entity == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(equipmentType).State = EntityState.Modified;
+            entity.Name = equipmentType.Name;
+            entity.PricePerDay = equipmentType.PricePerDay;
+            entity.PricePerHour = equipmentType.PricePerHour;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EquipmentTypeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return equipmentType;
         }
 
-        // POST: api/EquipmentTypes
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<EquipmentType>> PostEquipmentType(EquipmentType equipmentType)
+        public async Task<ActionResult<EquipmentTypeDTO>> PostEquipmentType(EquipmentTypeDTO dto)
         {
+            var equipmentType = new EquipmentType
+            {
+                Name = dto.Name,
+                PricePerDay = dto.PricePerDay,
+                PricePerHour = dto.PricePerHour
+            };
+
             _context.EquipmentType.Add(equipmentType);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEquipmentType", new { id = equipmentType.Id }, equipmentType);
+            dto.Id = equipmentType.Id;
+
+            return CreatedAtAction("GetEquipmentType", new { id = equipmentType.Id }, dto);
         }
 
-        // DELETE: api/EquipmentTypes/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<EquipmentType>> DeleteEquipmentType(int id)
         {
@@ -109,11 +105,6 @@ namespace RentApi.Api
             await _context.SaveChangesAsync();
 
             return equipmentType;
-        }
-
-        private bool EquipmentTypeExists(int id)
-        {
-            return _context.EquipmentType.Any(e => e.Id == id);
         }
     }
 }

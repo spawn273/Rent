@@ -10,21 +10,21 @@ using RentApi.Api.Extensions;
 using RentApi.Infrastructure;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure;
 
 namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EquipmentsController : BaseApiController
+    public class EquipmentController : BaseApiController
     {
         private readonly AppDbContext _context;
 
-        public EquipmentsController(AppDbContext context)
+        public EquipmentController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Equipments
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipmentDTO>>> GetEquipmentList(int? shopId, int? rentId)
         {
@@ -58,7 +58,6 @@ namespace RentApi.Api
             return result;
         }
 
-        // GET: api/Equipments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentDTO>> GetEquipment(int id)
         {
@@ -72,51 +71,41 @@ namespace RentApi.Api
             return equipment;
         }
 
-        // PUT: api/Equipments/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+
         [HttpPut("{id}")]
-        public async Task<ActionResult<Equipment>> PutEquipment(int id, Equipment equipment)
+        public async Task<ActionResult<EquipmentDTO>> PutEquipment(int id, EquipmentDTO equipment)
         {
-            if (id != equipment.Id)
+            var entity = await _context.Equipment.FirstOrDefaultAsync(x => x.Id == id);
+            if (equipment == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(equipment).State = EntityState.Modified;
+            entity.Name = equipment.Name;
+            entity.EquipmentTypeId = equipment.EquipmentTypeId;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EquipmentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
+
             return equipment;
-            //return NoContent();
         }
 
-        // POST: api/Equipments
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
+        public async Task<ActionResult<EquipmentDTO>> PostEquipment(EquipmentDTO dto)
         {
+            var equipment = new Equipment
+            {
+                ShopId = HttpContext.GetShopId(),
+                EquipmentTypeId = dto.EquipmentTypeId,
+                Name = dto.Name
+            };
             _context.Equipment.Add(equipment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEquipment", new { id = equipment.Id }, equipment);
+            dto.Id = equipment.Id;
+
+            return CreatedAtAction("GetEquipment", new { id = equipment.Id }, dto);
         }
 
-        // DELETE: api/Equipments/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Equipment>> DeleteEquipment(int id)
         {
@@ -130,11 +119,6 @@ namespace RentApi.Api
             await _context.SaveChangesAsync();
 
             return equipment;
-        }
-
-        private bool EquipmentExists(int id)
-        {
-            return _context.Equipment.Any(e => e.Id == id);
         }
     }
 }

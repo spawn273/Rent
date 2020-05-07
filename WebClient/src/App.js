@@ -2,10 +2,8 @@
 import React from 'react';
 import { Admin, Resource, ListGuesser } from 'react-admin';
 import jsonServerProvider from 'ra-data-json-server';
-import { EquipmentList, EquipmentEdit, EquipmentCreate } from './EquipmentList';
 import { EquipmentTypesList } from './EquipmentTypesList';
 import { ShopsList } from './ShopsCrud';
-import { RentsList, RentsShow, RentsEdit, RentsCreate } from './RentsCrud';
 import { EmployeesList } from './EmployeesCrud';
 import MyLayout from './MyLayout';
 import customRoutes from './customRoutes';
@@ -15,6 +13,9 @@ import authProvider from './authProvider';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import russianMessages from 'ra-language-russian';
 import EmployeeInfo from './EmployeeInfo';
+import rents from './rents';
+import equipment from './equipment';
+import equipmentTypes from './equipmentTypes';
 
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -45,7 +46,7 @@ const resources = {
             comment: "Комментарий"
         },
     },
-    equipments: {
+    equipment: {
         name: 'Оборудование |||| Оборудование',
         fields: {
             name: 'Наименование',
@@ -97,11 +98,11 @@ const App = () => (
         dataProvider={myDataProvider} authProvider={authProvider} i18nProvider={i18nProvider}>
 
         <Resource name="shops" list={ShopsList} />
-        <Resource name="rents" list={RentsList} edit={RentsEdit} show={RentsShow} create={RentsCreate}/>
+        <Resource name="rents" {...rents} />
         <Resource name="employees" list={EmployeesList} />
         <Resource name="customers" />
-        <Resource name="equipments" list={EquipmentList} edit={EquipmentEdit} create={EquipmentCreate}  />
-        <Resource name="equipmentTypes" list={EquipmentTypesList} />
+        <Resource name="equipment" {...equipment}/>
+        <Resource name="equipmentTypes" {...equipmentTypes} />
 
 
     </Admin>
@@ -123,7 +124,7 @@ const App = () => (
         //             create={RentsCreate} />,
 
         //         <Resource name="employees" list={EmployeesList} />,
-        //         <Resource name="equipments" list={EquipmentList} edit={EquipmentEdit} create={EquipmentCreate} />,
+        //         <Resource name="equipment" list={EquipmentList} edit={EquipmentEdit} create={EquipmentCreate} />,
         //         <Resource name="equipmentTypes" list={EquipmentTypesList} />,
         //     ]
         // }}

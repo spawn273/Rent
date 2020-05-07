@@ -97,7 +97,7 @@ namespace RentApi.Infrastructure.Database
 
             context.Employee.AddRange(employees);
 
-            // Equipments
+            // Equipment
 
             var equipment = new Equipment[]
             {

@@ -40,7 +40,6 @@ var moment = require('moment');
 
 // TODO:
 // +1hour +1day
-// close form
 
 
 const ListActions = ({
@@ -189,7 +188,7 @@ export const RentsShow = ({ permissions, classes, ...props }) => {
                             </SingleFieldList>
                         </ReferenceArrayField>
 
-                        <RentTable record={controllerProps.record} />
+                        <EquipmentTable record={controllerProps.record} />
                     </SimpleShowLayout>
                 </ShowView>
             }
@@ -275,7 +274,7 @@ export const RentsEdit = ({ permissions, ...props }) => {
                                         
                     <FormDataConsumer >
                         {formDataProps => (
-                            <RentTable record={formDataProps.formData} />
+                            <EquipmentTable record={formDataProps.formData} />
                         )}
                     </FormDataConsumer>
 
@@ -303,7 +302,7 @@ export const RentsCreate = (props) => (
 
             <FormDataConsumer >
                 {formDataProps => (
-                    <RentTable record={formDataProps.formData} />
+                    <EquipmentTable record={formDataProps.formData} />
                 )}
             </FormDataConsumer>
 
@@ -313,7 +312,7 @@ export const RentsCreate = (props) => (
 
 
 
-const RentTable = (props) => {
+const EquipmentTable = (props) => {
     let record = props.record
     let equipmentIds = record.equipmentIds;
     if (!equipmentIds) {
@@ -343,11 +342,9 @@ const RentTable = (props) => {
         return true;
     }
 
-    // todo: loading vs loaded?
     const loaded = equipmentIds.length == 0 || eqRequest.loaded && typesRequest.loaded && allLoaded(eqRequest.data) && allLoaded(typesRequest.data);
     if (!loaded) {
         return <Loading />;
-        // return null;
     }
 
     let types = typesRequest.data.reduce(function (acc, cur, i) {

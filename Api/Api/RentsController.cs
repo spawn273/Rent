@@ -108,14 +108,11 @@ namespace RentApi.Api
             return rent;
         }
 
-        // PUT: api/Rents/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         public async Task<ActionResult<RentDTO>> PutRent(int id, RentDTO rent)
         {
             var entity = await _context.Rent.Include(x => x.RentEquipment).FirstOrDefaultAsync(x => x.Id == id);
-            if (rent == null)
+            if (entity == null)
             {
                 return NotFound();
             }

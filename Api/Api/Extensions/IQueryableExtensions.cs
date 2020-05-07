@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RentApi.Api.Extensions
 {
-    public static class RentExtensions
+    public static class IQueryableExtensions
     {
         public static IQueryable<RentDTO> ToDTO(this IQueryable<Rent> rents)
         {
@@ -31,6 +31,18 @@ namespace RentApi.Api.Extensions
                 Name = x.Name,
                 ShopId = x.ShopId,
                 EquipmentTypeId = x.EquipmentTypeId,
+                RentIds = x.RentEquipment.Where(x => x.Rent.Closed != null).Select(x => x.RentId).ToArray()
+            });
+        }
+
+        public static IQueryable<EquipmentTypeDTO> ToDTO(this IQueryable<EquipmentType> types)
+        {
+            return types.Select(x => new EquipmentTypeDTO
+            {
+                Id = x.Id,
+                Name = x.Name,
+                PricePerDay = x.PricePerDay,
+                PricePerHour = x.PricePerHour
             });
         }
     }
