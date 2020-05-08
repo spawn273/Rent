@@ -4,7 +4,6 @@ import CardContent from '@material-ui/core/CardContent';
 import { Title } from 'react-admin';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
-import {changeShop} from './actions'
 
 const Foo = () => {
     
@@ -14,13 +13,12 @@ const Foo = () => {
         <Card>
             <Title title="My Page" />
             <CardContent>
-                <span>hui! {shop}</span>
+                <span> {shop}</span>
                 
                 <Button
                     variant="contained"
                     // className={classes.button}
                     // color={theme === 'light' ? 'primary' : 'default'}
-                    onClick={() => dispatch(changeShop(shop + 1))}
                 >
                     button
                 </Button>

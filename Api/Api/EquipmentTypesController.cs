@@ -57,7 +57,7 @@ namespace RentApi.Api
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<EquipmentTypeDTO>> PutEquipmentType(int id, EquipmentTypeDTO equipmentType)
+        public async Task<ActionResult<EquipmentTypeDTO>> PutEquipmentType(int id, EquipmentTypeDTO dto)
         {
             var entity = await _context.EquipmentType.FirstOrDefaultAsync(x => x.Id == id);
             if (entity == null)
@@ -65,13 +65,13 @@ namespace RentApi.Api
                 return NotFound();
             }
 
-            entity.Name = equipmentType.Name;
-            entity.PricePerDay = equipmentType.PricePerDay;
-            entity.PricePerHour = equipmentType.PricePerHour;
+            entity.Name = dto.Name;
+            entity.PricePerDay = dto.PricePerDay;
+            entity.PricePerHour = dto.PricePerHour;
 
             await _context.SaveChangesAsync();
 
-            return equipmentType;
+            return dto;
         }
 
         [HttpPost]

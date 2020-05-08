@@ -3,7 +3,7 @@ import { AppBar } from 'react-admin';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { SelectInput } from 'react-admin';
-import ShopSelector from './ShopSelector';
+import ShopSelector from '../shopSelector/ShopSelector';
 import EmployeeInfo from './EmployeeInfo';
 
 const useStyles = makeStyles({

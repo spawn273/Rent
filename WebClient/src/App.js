@@ -1,21 +1,18 @@
 // in src/App.js
 import React from 'react';
 import { Admin, Resource, ListGuesser } from 'react-admin';
-import jsonServerProvider from 'ra-data-json-server';
-import { EquipmentTypesList } from './EquipmentTypesList';
-import { ShopsList } from './ShopsCrud';
-import { EmployeesList } from './EmployeesCrud';
-import MyLayout from './MyLayout';
-import customRoutes from './customRoutes';
-import shopReducer from './shopReducer';
-import myDataProvider from './DataProvider';
-import authProvider from './authProvider';
+import MyLayout from './layout/MyLayout';
+import customRoutes from './customRoutes/customRoutes';
+import shopReducer from './shopSelector/shopReducer';
+import dataProvider from './dataProvider/dataProvider';
+import authProvider from './authProvider/authProvider';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import russianMessages from 'ra-language-russian';
-import EmployeeInfo from './EmployeeInfo';
-import rents from './rents';
-import equipment from './equipment';
-import equipmentTypes from './equipmentTypes';
+import rents from './resources/rents';
+import equipment from './resources/equipment';
+import equipmentTypes from './resources/equipmentTypes';
+import employees from './resources/employees';
+import shops from './resources/shops';
 
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -95,11 +92,11 @@ const i18nProvider = polyglotI18nProvider(() => messages, 'ru');
 
 const App = () => (
     <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} 
-        dataProvider={myDataProvider} authProvider={authProvider} i18nProvider={i18nProvider}>
+        dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18nProvider}>
 
-        <Resource name="shops" list={ShopsList} />
+        <Resource name="shops" {...shops} />
         <Resource name="rents" {...rents} />
-        <Resource name="employees" list={EmployeesList} />
+        <Resource name="employees" {...employees} />
         <Resource name="customers" />
         <Resource name="equipment" {...equipment}/>
         <Resource name="equipmentTypes" {...equipmentTypes} />

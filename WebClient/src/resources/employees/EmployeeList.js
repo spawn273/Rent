@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, ReferenceField } from 'react-admin';
 
-export const EmployeesList = props => (
+const EmployeeList = props => (
     <List {...props}>
         <Datagrid rowClick="edit">
             <TextField source="id" />
@@ -12,3 +12,5 @@ export const EmployeesList = props => (
         </Datagrid>
     </List>
 );
+
+export default EmployeeList;
