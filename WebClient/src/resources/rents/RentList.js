@@ -58,7 +58,7 @@ ListActions.defaultProps = {
     onUnselectItems: () => null,
 };
 
-const PostFilter = (props) => (
+const ListFilter = (props) => (
     <Filter {...props}>
         <SearchInput source="q" alwaysOn />
         <BooleanInput label="custom.rents.filters.opened" source="opened" alwaysOn />
@@ -78,7 +78,7 @@ const RentList = ({ permissions, ...props }) => {
     const classes = listStyles();
     const shop = useSelector((state) => state.shop);
     const isMyShop = permissions && permissions.isMyShop(shop);
-    return <List {...props} filters={<PostFilter />} 
+    return <List {...props} filters={<ListFilter />} 
         actions={<ListActions create={isMyShop} {...props} />}
         filter={{ shopId: shop }}>
         <Datagrid optimized classes={{ headerCell: classes.headerCell }}  rowClick="show">

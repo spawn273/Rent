@@ -11,9 +11,6 @@ import equipmentTypes from './resources/equipmentTypes';
 import rents from './resources/rents';
 import shops from './resources/shops';
 import shopReducer from './shopSelector/shopReducer';
-
-import history from './history';
-
 // const Wrapper1 = (props) => {
 //     const shop = useSelector((state) => state.shop);
 //     return props.children(props, shop);
@@ -26,7 +23,7 @@ import history from './history';
 
 const App = () => (
     <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} 
-        dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18n} history={history}>
+        dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18n}>
 
         <Resource name="shops" {...shops} />
         <Resource name="rents" {...rents} />

@@ -31,6 +31,12 @@ const resources = {
             name: 'Наименование',
         },
     },
+    'guest/equipment': {
+        fields: {
+            equipmentType: 'Тип оборудования',
+            available: 'Доступен для аренды',
+        }
+    }
 }
 
 const custom = {

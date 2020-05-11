@@ -23,7 +23,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start-emp": "node tools/copy.js src/apps/emp/App.js src/App.js && yarn start",
+    "start-guest": "node tools/copy.js src/apps/guest/App.js src/App.js && yarn start"
   },
   "eslintConfig": {
     "extends": "react-app"

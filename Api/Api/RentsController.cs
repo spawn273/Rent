@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentApi.Api.DTO;
 using RentApi.Api.Extensions;
+using RentApi.Application;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 using SmartAnalytics.BASF.Backend.Infrastructure;
+using System;
+using System.Linq;
 using System.Linq.Dynamic.Core;
-using RentApi.Application;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace RentApi.Api
 {
@@ -40,7 +39,7 @@ namespace RentApi.Api
         // GET: api/Rents
         [HttpGet]
         public async Task<ActionResult<RentDTO[]>> GetRents(int? shopId,
-            int _start = 0, int _end = 10, 
+            int _start = 0, int _end = 10,
             string _sort = "id", string _order = "ASC",
             bool opened = false, DateTime? endLte = null,
             string q = ""
