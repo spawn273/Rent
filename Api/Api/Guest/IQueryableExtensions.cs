@@ -1,13 +1,14 @@
 ﻿using RentApi.Infrastructure.Database.Models;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RentApi.Api.Guest
 {
     public static class IQueryableExtensions
     {
-        public static IQueryable<EquipmentDTO> ToDTO(this IQueryable<Equipment> rents)
+        public static IQueryable<EquipmentDTO> ToDTO(this IQueryable<Equipment> equipment)
         {
-            return rents.Select(x => new EquipmentDTO
+            return equipment.Select(x => new EquipmentDTO
             {
                 Id = x.Id,
                 Type = x.EquipmentType.Name,

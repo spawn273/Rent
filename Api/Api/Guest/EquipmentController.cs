@@ -42,12 +42,32 @@ namespace RentApi.Api.Guest
             var count = await query.CountAsync();
             SetTotalCount(count);
 
-            var result = await query
+            var paged = query
                 .Skip(_start)
-                .Take(_end - _start)
-                .OrderBy($"{_sort} {_order}")
-                .ToDTO()
-                .ToArrayAsync();
+                .Take(_end - _start);
+
+            IQueryable<EquipmentDTO> ordered;
+            if (_sort == "available")
+            {
+                // Sort by DTO
+                ordered = paged
+                    .ToDTO()
+                    .OrderBy($"{_sort} {_order}");
+            } 
+            else
+            {
+                // Sort by Entity                
+                var order = $"{_sort} {_order}";
+                if (_sort == "type")
+                {
+                    order = $"equipmentType.name {_order}";
+                }
+                ordered = paged
+                    .OrderBy(order)
+                    .ToDTO();
+            }
+
+            var result = await ordered.ToArrayAsync();
 
             return result;
         }
