@@ -46,18 +46,18 @@ namespace RentApi.Infrastructure.Database
             {
                 new User
                 {
-                    FirstName = "Артем",
-                    MiddleName = "Валерьевич",
-                    LastName = "Унтан",
+                    FirstName = "Иван",
+                    MiddleName = "Иванович",
+                    LastName = "Иванов",
                     UserName = "vova228@mail.ru",
                     Email = "vova228@mail.ru",
                     EmailConfirmed = true
                 },
                 new User
                 {
-                    FirstName = "Олеся",
-                    MiddleName = "Сергеевна",
-                    LastName = "Долженко",
+                    FirstName = "Дмитрий",
+                    MiddleName = "Дмитриевич",
+                    LastName = "Дмитриев",
                     UserName = "dima420@mail.ru",
                     Email = "dima420@mail.ru",
                     EmailConfirmed = true
@@ -73,11 +73,11 @@ namespace RentApi.Infrastructure.Database
             {
                 new Shop
                 {
-                    Name = "Гидра"
+                    Name = "Прокат на Ленина"
                 },
                 new Shop
                 {
-                    Name = "Рамп"
+                    Name = "Прокат на Мира"
                 }
             };
 
@@ -108,10 +108,10 @@ namespace RentApi.Infrastructure.Database
                 new Equipment
                 {
                     Shop = shops[0],
-                    Name = "руки збс",
+                    Name = "Гидрокостюм короткий мужской Joss, 2,5 мм",
                     EquipmentType = new EquipmentType
                     {
-                        Name = "руки",
+                        Name = "Гидрокостюм короткий мужской Joss, 2,5 мм",
                         PricePerHour = 100,
                         PricePerDay = 1000,
                     }
@@ -119,23 +119,90 @@ namespace RentApi.Infrastructure.Database
                 new Equipment
                 {
                     Shop = shops[0],
-                    Name = "локти збс",
+                    Name = "Палатка 4-местная Outventure Trenton 4",
                     EquipmentType = new EquipmentType
                     {
-                        Name = "локти",
-                        PricePerHour = 100,
-                        PricePerDay = 1000,
+                        Name = "Палатка 4-местная",
+                        PricePerHour = 80,
+                        PricePerDay = 800,
                     }
                 },
-                new Equipment
+               new Equipment
                 {
-                    Shop = shops[1],
-                    Name = "ноги збс",
+                    Shop = shops[0],
+                    Name = "Палатка 3-местная Outventure Tahoe Camo 3",
                     EquipmentType = new EquipmentType
                     {
-                        Name = "ноги",
+                        Name = "Палатка 3-местная",
+                        PricePerHour = 50,
+                        PricePerDay = 550,
+                    }
+                },
+               new Equipment
+                {
+                    Shop = shops[0],
+                    Name = "Палатка 2-местная Outventure DOME 2",
+                    EquipmentType = new EquipmentType
+                    {
+                        Name = "Палатка 2-местная",
+                        PricePerHour = 25,
+                        PricePerDay = 250,
+                    }
+                },
+
+               new Equipment
+                {
+                    Shop = shops[1],
+                    Name = "Байдарка Тритон Вуокса Н-2",
+                    EquipmentType = new EquipmentType
+                    {
+                        Name = "Байдарка Тритон Вуокса Н-2",
                         PricePerHour = 500,
-                        PricePerDay = 5000
+                        PricePerDay = 1500
+                    }
+                },
+               new Equipment
+                {
+                    Shop = shops[1],
+                    Name = "Велосипед шоссейный CUBE Attain Race",
+                    EquipmentType = new EquipmentType
+                    {
+                        Name = "Велосипед шоссейный CUBE Attain Race",
+                        PricePerHour = 200,
+                        PricePerDay = 1200
+                    }
+                },
+               new Equipment
+                {
+                    Shop = shops[1],
+                    Name = "Велосипед горный Stern Dynamic 2.0 26",
+                    EquipmentType = new EquipmentType
+                    {
+                        Name = "Велосипед горный Stern Dynamic 2.0 26",
+                        PricePerHour = 300,
+                        PricePerDay = 1300
+                    }
+                },
+               new Equipment
+                {
+                    Shop = shops[1],
+                    Name = "Велосипед городской Stern Q-stom neon 28",
+                    EquipmentType = new EquipmentType
+                    {
+                        Name = "Велосипед городской Stern Q-stom neon 28",
+                        PricePerHour = 500,
+                        PricePerDay = 1500
+                    }
+                },
+               new Equipment
+                {
+                    Shop = shops[1],
+                    Name = "Байдарка Тритон Нева-2",
+                    EquipmentType = new EquipmentType
+                    {
+                        Name = "Байдарка Тритон Нева-2",
+                        PricePerHour = 600,
+                        PricePerDay = 1600
                     }
                 }
             };
@@ -170,18 +237,18 @@ namespace RentApi.Infrastructure.Database
                 {
                     Shop = shops[0],
                     Employee = employees[0],
-                    Customer = "Жоран",
+                    Customer = "Степанов Степан Степанович",
                     From = DateTime.Parse("2020-01-10"),
                     To = DateTime.Parse("2020-02-10"),
                     Closed = DateTime.Parse("2020-02-11"),
                     Payment = 5000,
-                    Comment = "пидрбля"
+                    Comment = "тел. 234-67-98"
                 },
                 new Rent
                 {
                     Shop = shops[0],
                     Employee = employees[0],
-                    Customer = "Степан",
+                    Customer = "Павлов Павел Павлович",
                     From = DateTime.Parse("2019-01-10"),
                     To = DateTime.Parse("2021-02-10"),
                 },
@@ -189,7 +256,7 @@ namespace RentApi.Infrastructure.Database
                 {
                     Shop = shops[0],
                     Employee = employees[0],
-                    Customer = "Пашок",
+                    Customer = "Егоров Егор Егорьевич",
                     From = DateTime.Parse("2019-01-10"),
                     To = DateTime.UtcNow
                 },
@@ -197,7 +264,7 @@ namespace RentApi.Infrastructure.Database
                 {
                     Shop = shops[1],
                     Employee = employees[1],
-                    Customer = "Сашок",
+                    Customer = "Александров Александр Александрович",
                     From = DateTime.Parse("2020-01-11"),
                     To = DateTime.Parse("2020-02-12"),
                     RentEquipment = new List<RentEquipment>

@@ -9,7 +9,7 @@ const resources = {
             from: "Дата выдачи",
             to: "Дата возврата (договор)",
             closed: "Дата возврата (факт)",
-            shopId: "Магазин",
+            shopId: "Арендная точка",
             equipmentIds: "Оборудование",
             payment: "Оплата",
             comment: "Комментарий"
@@ -21,7 +21,7 @@ const resources = {
             name: 'Наименование',
             pricePerDay: 'Цена за день',
             pricePerHour: 'Цена за час',
-            shopId: 'Магазин',
+            shopId: 'Арендная точка',
             equipmentTypeId: 'Тип оборудования',
         },
     },
@@ -29,18 +29,41 @@ const resources = {
         name: 'Тип оборудования |||| Тип оборудования',
         fields: {
             name: 'Наименование',
+            pricePerDay: 'Цена за день',
+            pricePerHour: 'Цена за час',
         },
     },
-    'guest/equipment': {
+
+    employees: {
+        name: 'Сотрудники |||| Сотрудники',
         fields: {
-            equipmentType: 'Тип оборудования',
+            name: 'Наименование',
+            shopId: 'Арендная точка',
+        },
+    },
+
+    shops: {
+        name: 'Арендные точки |||| Арендные точки',
+        fields: {
+            name: 'Наименование',
+        },
+    },
+
+    'guest/equipment': {
+        name: 'Список оборудования |||| Список оборудования',
+        fields: {
             available: 'Доступен для аренды',
+            name: 'Наименование',
+            type: 'Тип оборудования',
+            shopId: 'Арендная точка',
         }
-    }
+    },
+
+
 }
 
 const custom = {
-    shopSelector: "Магазин",
+    shopSelector: "Арендная точка",
     rents: {
         filters: {
             opened: "Открытые",
