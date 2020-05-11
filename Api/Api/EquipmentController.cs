@@ -76,7 +76,7 @@ namespace RentApi.Api
         public async Task<ActionResult<EquipmentDTO>> PutEquipment(int id, EquipmentDTO equipment)
         {
             var entity = await _context.Equipment.FirstOrDefaultAsync(x => x.Id == id);
-            if (equipment == null)
+            if (entity == null)
             {
                 return NotFound();
             }

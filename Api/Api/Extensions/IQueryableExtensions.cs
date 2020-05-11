@@ -45,5 +45,16 @@ namespace RentApi.Api.Extensions
                 PricePerHour = x.PricePerHour
             });
         }
+
+        public static IQueryable<EmployeeDTO> ToDTO(this IQueryable<Employee> types)
+        {
+            return types.Select(x => new EmployeeDTO
+            {
+                Id = x.Id,
+                Name = $"{x.User.FirstName} {x.User.MiddleName} {x.User.LastName}",
+                ShopId = x.ShopId,
+                UserId = x.UserId
+            });
+        }
     }
 }

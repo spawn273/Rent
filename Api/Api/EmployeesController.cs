@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RentApi.Api.DTO;
+using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 
@@ -23,18 +25,19 @@ namespace RentApi.Api
 
         // GET: api/Employees
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee()
         {
-            var result = await _context.Employee.ToArrayAsync();
-            SetTotalCount(result.Length);
+            var result = await _context.Employee.ToDTO().ToArrayAsync();
+            SetTotalCount(_context.Employee.Count());
             return result;
         }
 
         [HttpGet("many")]
-        public async Task<ActionResult<Employee[]>> GetMany([FromQuery] int[] id)
+        public async Task<ActionResult<EmployeeDTO[]>> GetMany([FromQuery] int[] id)
         {
             var result = await _context.Employee
                 .Where(x => id.Contains(x.Id))
+                .ToDTO()
                 .ToArrayAsync();
 
             return result;
@@ -42,9 +45,12 @@ namespace RentApi.Api
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id)
+        public async Task<ActionResult<EmployeeDTO>> GetEmployee(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employee
+                .Where(x => x.Id == id)
+                .ToDTO()
+                .FirstOrDefaultAsync();
 
             if (employee == null)
             {
@@ -54,48 +60,28 @@ namespace RentApi.Api
             return employee;
         }
 
-        // PUT: api/Employees/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        public async Task<ActionResult<EmployeeDTO>> PutEmployee(int id, EmployeeDTO dto)
         {
-            if (id != employee.Id)
+            var entity = await _context.Employee.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
+            if (entity == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(employee).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EmployeeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Employees
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
-        {
-            _context.Employee.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+            return dto;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PostEmployee(EmployeeDTO employee)
+        {
+            return Ok();
+            //_context.Employee.Add(employee);
+            //await _context.SaveChangesAsync();
+
+            //return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
         }
 
         // DELETE: api/Employees/5
@@ -112,11 +98,6 @@ namespace RentApi.Api
             await _context.SaveChangesAsync();
 
             return employee;
-        }
-
-        private bool EmployeeExists(int id)
-        {
-            return _context.Employee.Any(e => e.Id == id);
         }
     }
 }

@@ -46,14 +46,18 @@ namespace RentApi.Infrastructure.Database
             {
                 new User
                 {
-                    FirstName = "vova",
+                    FirstName = "Артем",
+                    MiddleName = "Валерьевич",
+                    LastName = "Унтан",
                     UserName = "vova228@mail.ru",
                     Email = "vova228@mail.ru",
                     EmailConfirmed = true
                 },
                 new User
                 {
-                    FirstName = "dima",
+                    FirstName = "Олеся",
+                    MiddleName = "Сергеевна",
+                    LastName = "Долженко",
                     UserName = "dima420@mail.ru",
                     Email = "dima420@mail.ru",
                     EmailConfirmed = true
