@@ -101,6 +101,59 @@ namespace RentApi.Infrastructure.Database
 
             context.Employee.AddRange(employees);
 
+            // EquipmentTypes
+            var equipmentTypes = new EquipmentType[]
+            {
+                new EquipmentType
+                {
+                    Name = "Гидрокостюм",
+                    PricePerHour = 100,
+                    PricePerDay = 1000,
+                },
+                new EquipmentType
+                {
+                    Name = "Палатка 4-местная",
+                    PricePerHour = 80,
+                    PricePerDay = 800,
+                },
+                new EquipmentType
+                {
+                    Name = "Палатка 3-местная",
+                    PricePerHour = 50,
+                    PricePerDay = 550,
+                },
+                new EquipmentType
+                {
+                    Name = "Палатка 2-местная",
+                    PricePerHour = 25,
+                    PricePerDay = 250,
+                },
+                new EquipmentType
+                {
+                    Name = "Байдарка",
+                    PricePerHour = 500,
+                    PricePerDay = 1500
+                },
+                new EquipmentType
+                {
+                    Name = "Велосипед шоссейный",
+                    PricePerHour = 200,
+                    PricePerDay = 1200
+                },
+                new EquipmentType
+                {
+                    Name = "Велосипед горный",
+                    PricePerHour = 300,
+                    PricePerDay = 1300
+                },
+                new EquipmentType
+                {
+                    Name = "Велосипед городской",
+                    PricePerHour = 500,
+                    PricePerDay = 1500
+                }
+            };
+
             // Equipment
 
             var equipment = new Equipment[]
@@ -109,101 +162,56 @@ namespace RentApi.Infrastructure.Database
                 {
                     Shop = shops[0],
                     Name = "Гидрокостюм короткий мужской Joss, 2,5 мм",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Гидрокостюм короткий мужской Joss, 2,5 мм",
-                        PricePerHour = 100,
-                        PricePerDay = 1000,
-                    }
+                    EquipmentType = equipmentTypes[0]
                 },
                 new Equipment
                 {
                     Shop = shops[0],
                     Name = "Палатка 4-местная Outventure Trenton 4",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Палатка 4-местная",
-                        PricePerHour = 80,
-                        PricePerDay = 800,
-                    }
+                    EquipmentType = equipmentTypes[1]
                 },
                new Equipment
                 {
                     Shop = shops[0],
                     Name = "Палатка 3-местная Outventure Tahoe Camo 3",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Палатка 3-местная",
-                        PricePerHour = 50,
-                        PricePerDay = 550,
-                    }
+                    EquipmentType = equipmentTypes[2]
                 },
                new Equipment
                 {
                     Shop = shops[0],
                     Name = "Палатка 2-местная Outventure DOME 2",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Палатка 2-местная",
-                        PricePerHour = 25,
-                        PricePerDay = 250,
-                    }
+                    EquipmentType = equipmentTypes[3]
                 },
 
                new Equipment
                 {
                     Shop = shops[1],
                     Name = "Байдарка Тритон Вуокса Н-2",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Байдарка Тритон Вуокса Н-2",
-                        PricePerHour = 500,
-                        PricePerDay = 1500
-                    }
+                    EquipmentType = equipmentTypes[4]
                 },
                new Equipment
                 {
                     Shop = shops[1],
                     Name = "Велосипед шоссейный CUBE Attain Race",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Велосипед шоссейный CUBE Attain Race",
-                        PricePerHour = 200,
-                        PricePerDay = 1200
-                    }
+                    EquipmentType = equipmentTypes[5]
                 },
                new Equipment
                 {
                     Shop = shops[1],
                     Name = "Велосипед горный Stern Dynamic 2.0 26",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Велосипед горный Stern Dynamic 2.0 26",
-                        PricePerHour = 300,
-                        PricePerDay = 1300
-                    }
+                    EquipmentType = equipmentTypes[6]
                 },
                new Equipment
                 {
                     Shop = shops[1],
                     Name = "Велосипед городской Stern Q-stom neon 28",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Велосипед городской Stern Q-stom neon 28",
-                        PricePerHour = 500,
-                        PricePerDay = 1500
-                    }
+                    EquipmentType = equipmentTypes[7]
                 },
                new Equipment
                 {
                     Shop = shops[1],
                     Name = "Байдарка Тритон Нева-2",
-                    EquipmentType = new EquipmentType
-                    {
-                        Name = "Байдарка Тритон Нева-2",
-                        PricePerHour = 600,
-                        PricePerDay = 1600
-                    }
+                    EquipmentType = equipmentTypes[4]
                 }
             };
 

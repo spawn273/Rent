@@ -16,6 +16,9 @@ const ListFilter = (props) => {
             <ReferenceInput  source="equipmentType" reference="equipmentTypes" alwaysOn>
                 <SelectInput optionText="name" />
             </ReferenceInput>
+            <ReferenceInput  source="shop" reference="shops" alwaysOn>
+                <SelectInput optionText="name" />
+            </ReferenceInput>
             {/* <ReferenceArrayInput reference="equipmentTypes" source="equipmentTypes" alwaysOn>
                 <SelectArrayInput className={classes.button} >
                     <ChipField source="name" />
