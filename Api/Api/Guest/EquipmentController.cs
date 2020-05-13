@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using System;
@@ -25,18 +26,29 @@ namespace RentApi.Api.Guest
         public async Task<ActionResult<IEnumerable<EquipmentDTO>>> GetEquipmentList(
             int _start = 0, int _end = 10,
             string _sort = "id", string _order = "ASC",
-            int? shopId = null, int? equipmentType = null)
+            int? shop = null, int? equipmentType = null, bool available = false,
+            string q = "")
         {
             var query = _context.Equipment.AsQueryable();
 
-            if (shopId.HasValue)
+            if (shop.HasValue)
             {
-                query = query.Where(x => x.ShopId == shopId);
+                query = query.Where(x => x.ShopId == shop);
             }
 
             if (equipmentType.HasValue)
             {
                 query = query.Where(x => x.EquipmentTypeId == equipmentType);
+            }
+
+            if (available)
+            {
+                query = query.Where(x => !x.RentEquipment.Any());
+            }
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                query = query.Where(x => EF.Functions.ILike(x.Name, $"%{q}%"));
             }
 
             var count = await query.CountAsync();

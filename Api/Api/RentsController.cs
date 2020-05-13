@@ -26,16 +26,6 @@ namespace RentApi.Api
             _context = context;
         }
 
-        public enum Order
-        {
-            ASC,
-            DESC
-        }
-        public static object GetPropValue(object src, string propName)
-        {
-            return src.GetType().GetProperty(propName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance).GetValue(src, null);
-        }
-
         // GET: api/Rents
         [HttpGet]
         public async Task<ActionResult<RentDTO[]>> GetRents(int? shopId,

@@ -1,5 +1,6 @@
 ﻿using RentApi.Api.DTO;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities;
 using System.Linq;
 
 namespace RentApi.Api.Extensions
@@ -54,6 +55,15 @@ namespace RentApi.Api.Extensions
                 Name = $"{x.User.FirstName} {x.User.MiddleName} {x.User.LastName}",
                 ShopId = x.ShopId,
                 UserId = x.UserId
+            });
+        }
+
+        public static IQueryable<RoleDTO> ToDTO(this IQueryable<Role> roles)
+        {
+            return roles.Select(x => new RoleDTO
+            {
+                Id = x.Name,
+                Info = x.Info
             });
         }
     }

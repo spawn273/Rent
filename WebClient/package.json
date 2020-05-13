@@ -24,6 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "start-admin": "node tools/copy.js src/apps/admin/App.js src/App.js && yarn start",
     "start-emp": "node tools/copy.js src/apps/emp/App.js src/App.js && yarn start",
     "start-guest": "node tools/copy.js src/apps/guest/App.js src/App.js && yarn start"
   },

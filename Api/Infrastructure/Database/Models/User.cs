@@ -10,5 +10,6 @@ namespace SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities
         public string MiddleName { get; set; }
 
         public Employee Employee { get; set; }
+        public Role Role { get; set; }
     }
 }

@@ -56,8 +56,8 @@ const resources = {
             name: 'Наименование',
             type: 'Тип оборудования',
             shopId: 'Арендная точка',
-            shop: 'Арендная точка',
-            equipmentType: 'Тип оборудования',
+            shop: 'Точка',
+            equipmentType: 'Тип',
         }
     },
 

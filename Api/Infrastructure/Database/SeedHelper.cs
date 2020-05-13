@@ -309,8 +309,8 @@ namespace RentApi.Infrastructure.Database
 
             var roles = new Role[]
             {
-                new Role { Name = "admin" },
-                new Role { Name = "employee" }
+                new Role { Name = "admin", Info = "Администратор" },
+                new Role { Name = "employee", Info = "Сотрудник" }
             };
             await roleManager.CreateAsync(roles[0]);
             await roleManager.CreateAsync(roles[1]);
