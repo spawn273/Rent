@@ -2,8 +2,7 @@ import jsonServerProvider from 'ra-data-json-server';
 import { fetchUtils } from 'react-admin';
 import { stringify } from 'query-string';
 
-const apiUrl = 'http://localhost:5000/api';
-// const httpClient = fetchUtils.fetchJson;
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const httpClient = (url, options = {}) => {
     if (!options.headers) {

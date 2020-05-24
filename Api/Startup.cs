@@ -66,7 +66,7 @@ namespace RentApi
             services.AddOptions();
 
             services.AddDbContext<AppDbContext>(options =>
-                    options.UseNpgsql("Host=localhost;Port=5432;Database=rent;Username=postgres;Password=123"));
+                    options.UseNpgsql(Configuration.GetConnectionString("Default")));
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             // Swagger

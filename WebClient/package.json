@@ -26,7 +26,11 @@
     "eject": "react-scripts eject",
     "start-admin": "node tools/copy.js src/apps/admin/App.js src/App.js && yarn start",
     "start-emp": "node tools/copy.js src/apps/emp/App.js src/App.js && yarn start",
-    "start-guest": "node tools/copy.js src/apps/guest/App.js src/App.js && yarn start"
+    "start-guest": "node tools/copy.js src/apps/guest/App.js src/App.js && yarn start",
+
+    "build-guest": "node tools/copy.js src/apps/guest/App.js src/App.js && yarn build",
+    "build-emp": "node tools/copy.js src/apps/emp/App.js src/App.js && yarn build",
+    "build-admin": "node tools/copy.js src/apps/admin/App.js src/App.js && yarn build"
   },
   "eslintConfig": {
     "extends": "react-app"
