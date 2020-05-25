@@ -36,4 +36,4 @@ jobs:
 
       - name: Push image
         run: |
-          docker-compose push
+          docker-compose push docker.pkg.github.com
