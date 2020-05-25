@@ -32,8 +32,8 @@ jobs:
         run: docker-compose build
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Push image
         run: |
-          docker-compose push docker.pkg.github.com
+          docker-compose push
