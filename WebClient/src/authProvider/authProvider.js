@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 const authProvider = {
     login: ({ username, password }) =>  {
-        const request = new Request('http://localhost:5000/api/Authorization/token', {
+        const request = new Request(`${process.env.REACT_APP_API_URL}/Authorization/token`, {
             method: 'POST',
             body: JSON.stringify({ email: username, password }),
             headers: new Headers({ 'Content-Type': 'application/json' }),
