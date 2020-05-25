@@ -2,15 +2,21 @@ version: "3.7"
 services:
   frontend:
     image: janejavannie/rent-frontend
+    ports:
+      - "80:80"
+      - "81:81"
+      - "82:82"
     build:
       context: ./WebClient
-    volumes:
-      - frontend:/app
+    # volumes:
+    #   - ./WebClient/build:/usr/share/nginx/html/app
 
   backend:
     image: janejavannie/rent-backend
     build:
       context: ./Api
+    ports:
+      - "90:80"
     depends_on:
       - postgres
     environment:
@@ -24,18 +30,6 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "81:81"
-      - "82:82"
-    depends_on:
-      - backend
-    volumes:
-      - frontend:/usr/share/nginx/html/app:ro
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
 
 volumes:
   frontend:
