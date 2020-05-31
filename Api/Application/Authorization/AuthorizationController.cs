@@ -40,13 +40,14 @@ namespace SmartAnalytics.BASF.Backend.Application.Authorization
         {
             var user = await _context.Users
                 .Include(x => x.Employee)
-                .FirstOrDefaultAsync(x => x.Email == request.Email);
+                .FirstOrDefaultAsync(x => x.UserName == request.Email);
             if (user == null || !user.EmailConfirmed || !await _userManager.CheckPasswordAsync(user, request.Password))
             {
                 return BadRequest();
             }
 
             var claims = new List<Claim>();
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
 
             var role = (await _userManager.GetRolesAsync(user)).First();
             claims.Add(new Claim(ClaimTypes.Role, role));
@@ -56,8 +57,6 @@ namespace SmartAnalytics.BASF.Backend.Application.Authorization
                 claims.Add(new Claim("shop", user.Employee.ShopId.ToString()));
             }
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
 
             var jwt = new JwtSecurityToken(
                 issuer: _authOptions.Jwt.Issuer,
