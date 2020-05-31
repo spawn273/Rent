@@ -51,14 +51,13 @@ namespace SmartAnalytics.BASF.Backend.Application.Authorization
             var role = (await _userManager.GetRolesAsync(user)).First();
             claims.Add(new Claim(ClaimTypes.Role, role));
 
-            if (role == "employee")
+            if (user.Employee.ShopId.HasValue)
             {
                 claims.Add(new Claim("shop", user.Employee.ShopId.ToString()));
             }
 
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
-
 
             var jwt = new JwtSecurityToken(
                 issuer: _authOptions.Jwt.Issuer,

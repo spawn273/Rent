@@ -30,14 +30,17 @@ const useStyles = makeStyles({
 //     );
 // }
 
+const FullNameField = ({ record = {} }) => <span>{record.firstName} {record.middleName} {record.lastName}</span>;
+FullNameField.defaultProps = { label: 'Name' };
+
 const AccountList = props => {
     return (
         <List {...props} bulkActionButtons={false} /*filters={<ListFilter/>}*/ filterDefaultValues={{ available: true }}>
-            <Datagrid optimized>
-                <ReferenceField source="role" reference="roles" link="show" >
-                    <TextField source="info" />
+            <Datagrid optimized rowClick="edit">
+                <ReferenceField source="roleId" reference="roles" link="" >
+                    <TextField source="name" />
                 </ReferenceField>
-                <TextField source="name" />
+                <FullNameField source="name" />
                 <TextField source="userName" />
                 <TextField source="" />
                 <ReferenceField source="shopId" reference="shops" link="show" >

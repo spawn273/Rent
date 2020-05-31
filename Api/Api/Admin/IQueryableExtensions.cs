@@ -12,7 +12,9 @@ namespace RentApi.Api.Admin
             return equipment.Select(x => new AccountDTO
             {
                 Id = x.Id,
-                Name = $"{x.FirstName} {x.MiddleName} {x.LastName}",
+                FirstName = x.FirstName,
+                MiddleName = x.MiddleName,
+                LastName = x.LastName,
                 UserName = x.UserName,
                 ShopId = x.Employee.ShopId
             });

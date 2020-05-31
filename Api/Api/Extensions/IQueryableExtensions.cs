@@ -63,7 +63,18 @@ namespace RentApi.Api.Extensions
             return roles.Select(x => new RoleDTO
             {
                 Id = x.Name,
-                Info = x.Info
+                Name = x.Info
+            });
+        }
+
+        public static IQueryable<ShopDTO> ToDTO(this IQueryable<Shop> shops)
+        {
+            return shops.Select(x => new ShopDTO
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone
             });
         }
     }

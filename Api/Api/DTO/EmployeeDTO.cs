@@ -7,6 +7,6 @@
         public string Name { get; set; }
 
         public int UserId { get; set; }
-        public int ShopId { get; set; }
+        public int? ShopId { get; set; }
     }
 }

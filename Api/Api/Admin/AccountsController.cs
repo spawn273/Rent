@@ -32,7 +32,7 @@ namespace RentApi.Api.Admin
             int? shopId = null,
             string q = "")
         {
-            var query = _context.Users.AsQueryable();
+            var query = _context.Users.AsQueryable().Where(x => !x.Deleted);
 
             if (shopId.HasValue)
             {
@@ -61,7 +61,7 @@ namespace RentApi.Api.Admin
 
             foreach (var account in result)
             {
-                account.Role = (await _userManager.GetRolesAsync(await _context.Users.FindAsync(account.Id))).First();
+                account.RoleId = (await _userManager.GetRolesAsync(await _context.Users.FindAsync(account.Id))).First();
             }
 
             return result;
@@ -75,7 +75,7 @@ namespace RentApi.Api.Admin
                 .ToDTO()
                 .FirstOrDefaultAsync();
 
-            entity.Role = (await _userManager.GetRolesAsync(await _context.Users.FindAsync(id))).First();
+            entity.RoleId = (await _userManager.GetRolesAsync(await _context.Users.FindAsync(id))).First();
 
             if (entity == null)
             {
@@ -100,38 +100,22 @@ namespace RentApi.Api.Admin
                         return NotFound();
                     }
 
-                    var names = dto.Name.Split(' ');
-                    user.FirstName = names[0];
-                    user.MiddleName = names[1];
-                    user.LastName = names[2];
+                    user.FirstName = dto.FirstName;
+                    user.MiddleName = dto.MiddleName;
+                    user.LastName = dto.LastName;
                     user.UserName = dto.UserName;
+                    user.Employee.ShopId = dto.ShopId;
 
                     var oldRole = (await _userManager.GetRolesAsync(user)).First();
-                    var newRole = dto.Role;
+                    var newRole = dto.RoleId;
                     if (oldRole != newRole)
                     {
-                        if (oldRole == "admin")
-                        {
-                            // admin -> employee
-                            var employee = new Employee
-                            {
-                                ShopId = dto.ShopId.Value,
-                                UserId = user.Id
-                            };
-                            _context.Employee.Add(employee);
-                        }
-                        else
-                        {
-                            // employee -> admin
-                            var employee = await _context.Users.Where(x => x.Id == dto.Id).Select(x => x.Employee).FirstAsync();
-                            _context.Employee.Remove(employee);
-                        }
-
                         var currentRoles = await _userManager.GetRolesAsync(user);
                         await _userManager.RemoveFromRoleAsync(user, oldRole);
                         await _userManager.AddToRoleAsync(user, newRole);
                     }
 
+                    await _userManager.UpdateAsync(user);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
@@ -146,15 +130,15 @@ namespace RentApi.Api.Admin
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> Post(AccountDTO dto)
+        public async Task<ActionResult<AccountDTO>> Post(AccountDTO dto)
         {
-            var names = dto.Name.Split(' ');
             var user = new User
             {
                 UserName = dto.UserName,
-                FirstName = names[0],
-                MiddleName = names[1],
-                LastName = names[2],
+                FirstName = dto.FirstName,
+                MiddleName = dto.MiddleName,
+                LastName = dto.LastName,
+                EmailConfirmed = true
             };
 
             // TODO: validate input
@@ -169,26 +153,24 @@ namespace RentApi.Api.Admin
                         return BadRequest(userResult.Errors);
                     }
 
-                    var roleResult = await _userManager.AddToRoleAsync(user, dto.Role);
+                    var roleResult = await _userManager.AddToRoleAsync(user, dto.RoleId);
                     if (!roleResult.Succeeded)
                     {
                         return BadRequest(roleResult.Errors);
                     }
 
-                    if (dto.Role == "emloyee")
+                    var emloyee = new Employee
                     {
-                        var emloyee = new Employee
-                        {
-                            UserId = user.Id,
-                            ShopId = dto.ShopId.Value
-                        };
-                        _context.Employee.Add(emloyee);
-                    }
+                        UserId = user.Id,
+                        ShopId = dto.ShopId
+                    };
+                    _context.Employee.Add(emloyee);
 
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return CreatedAtAction("Get", new { id = user.Id }, user);
+                    dto.Id = user.Id;
+                    return dto;
                 }
                 catch (Exception)
                 {
@@ -198,7 +180,7 @@ namespace RentApi.Api.Admin
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteCustomer(int id)
+        public async Task<ActionResult<User>> Delete(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -206,7 +188,9 @@ namespace RentApi.Api.Admin
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
+            user.UserName = $"{user.UserName}_deleted";
+            user.Deleted = true;
+            await _userManager.UpdateAsync(user);
             await _context.SaveChangesAsync();
 
             return user;

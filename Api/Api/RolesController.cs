@@ -7,6 +7,7 @@ using RentApi.Application;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 using SmartAnalytics.BASF.Backend.Infrastructure;
+using SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities;
 using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
@@ -24,6 +25,14 @@ namespace RentApi.Api
         public RolesController(AppDbContext context)
         {
             _context = context;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<RoleDTO[]>> Get()
+        {
+            var roles = await _context.Roles.ToDTO().ToArrayAsync();
+            SetTotalCount(roles.Length);
+            return roles;
         }
 
         [HttpGet("many")]

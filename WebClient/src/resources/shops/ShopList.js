@@ -1,11 +1,12 @@
 import React from 'react';
-import { List, Datagrid, TextField } from 'react-admin';
+import { List, Datagrid, TextField, NumberField } from 'react-admin';
 
 const ShopList = props => (
-    <List {...props}>
-        <Datagrid rowClick="edit">
-            <TextField source="id" />
+    <List {...props} bulkActionButtons={false} /*filters={<ListFilter/>}*/>
+        <Datagrid optimized rowClick="edit">
             <TextField source="name" />
+            <TextField source="address" />
+            <TextField source="phone" />
         </Datagrid>
     </List>
 );

@@ -73,11 +73,15 @@ namespace RentApi.Infrastructure.Database
             {
                 new Shop
                 {
-                    Name = "Прокат на Ленина"
+                    Name = "Прокат на Ленина",
+                    Address = "Ленина 44",
+                    Phone = "+7912456789"
                 },
                 new Shop
                 {
-                    Name = "Прокат на Мира"
+                    Name = "Прокат на Мира",
+                    Address = "Мира 88",
+                    Phone = "+73428952445",
                 }
             };
 
@@ -316,10 +320,10 @@ namespace RentApi.Infrastructure.Database
             await roleManager.CreateAsync(roles[1]);
 
             await userManager.UpdateSecurityStampAsync(users[0]);
-            await userManager.AddToRoleAsync(users[0], "employee");
+            await userManager.AddToRoleAsync(users[0], "admin");
 
             await userManager.UpdateSecurityStampAsync(users[1]);
-            await userManager.AddToRoleAsync(users[1], "admin");
+            await userManager.AddToRoleAsync(users[1], "employee");
         }
     }
 }

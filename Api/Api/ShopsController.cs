@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RentApi.Api.DTO;
+using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
 
@@ -21,31 +24,55 @@ namespace RentApi.Api
             _context = context;
         }
 
-        // GET: api/Shops
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Shop>>> GetShop()
+        public async Task<ActionResult<ShopDTO[]>> GetList(
+            int _start = 0, int _end = 10,
+            string _sort = "id", string _order = "ASC",
+            string q = ""
+            )
         {
-            var result = await _context.Shop.ToArrayAsync();
-            SetTotalCount(result.Length);
-            return result;
-        }
+            var query = _context.Shop.AsQueryable().Where(x => !x.Archived);
 
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                query = query.Where(x => 
+                    EF.Functions.ILike(x.Name, $"%{q}%") || 
+                    EF.Functions.ILike(x.Address, $"%{q}%") ||
+                    EF.Functions.ILike(x.Phone, $"%{q}%")
+                );
+            }
 
-        [HttpGet("many")]
-        public async Task<ActionResult<Shop[]>> GetMany([FromQuery] int[] id)
-        {
-            var result = await _context.Shop
-                .Where(x => id.Contains(x.Id))
+            var count = await query.CountAsync();
+            SetTotalCount(count);
+
+            var result = await query
+                .Skip(_start)
+                .Take(_end - _start)
+                .OrderBy($"{_sort} {_order}")
+                .ToDTO()
                 .ToArrayAsync();
 
             return result;
         }
 
-        // GET: api/Shops/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Shop>> GetShop(int id)
+
+        [HttpGet("many")]
+        public async Task<ActionResult<ShopDTO[]>> GetMany([FromQuery] int[] id)
         {
-            var shop = await _context.Shop.FindAsync(id);
+            var result = await _context.Shop
+                .Where(x => id.Contains(x.Id))
+                .ToDTO()
+                .ToArrayAsync();
+
+            return result;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ShopDTO>> Get(int id)
+        {
+            var shop = await _context.Shop.Where(x => x.Id == id)
+                .ToDTO()
+                .FirstOrDefaultAsync();
 
             if (shop == null)
             {
@@ -55,53 +82,43 @@ namespace RentApi.Api
             return shop;
         }
 
-        // PUT: api/Shops/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShop(int id, Shop shop)
+        public async Task<ActionResult<ShopDTO>> Put(int id, ShopDTO dto)
         {
-            if (id != shop.Id)
+            var entity = await _context.Shop.FirstOrDefaultAsync(x => x.Id == id);
+            if (entity == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(shop).State = EntityState.Modified;
+            entity.Name = dto.Name;
+            entity.Address = dto.Address;
+            entity.Phone = dto.Phone;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ShopExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return dto;
         }
 
-        // POST: api/Shops
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Shop>> PostShop(Shop shop)
+        public async Task<ActionResult<ShopDTO>> Post(ShopDTO dto)
         {
+            var shop = new Shop
+            {
+                Name = dto.Name,
+                Address = dto.Address,
+                Phone = dto.Phone
+            };
             _context.Shop.Add(shop);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetShop", new { id = shop.Id }, shop);
+            dto.Id = shop.Id;
+
+            return dto;
         }
 
-        // DELETE: api/Shops/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Shop>> DeleteShop(int id)
+        public async Task<ActionResult<Shop>> Delete(int id)
         {
             var shop = await _context.Shop.FindAsync(id);
             if (shop == null)
@@ -109,15 +126,10 @@ namespace RentApi.Api
                 return NotFound();
             }
 
-            _context.Shop.Remove(shop);
+            shop.Archived = true;
             await _context.SaveChangesAsync();
 
             return shop;
-        }
-
-        private bool ShopExists(int id)
-        {
-            return _context.Shop.Any(e => e.Id == id);
         }
     }
 }
