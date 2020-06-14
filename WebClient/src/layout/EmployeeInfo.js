@@ -9,7 +9,9 @@ const EmployeeInfo = () => {
     const { loading, permissions } = usePermissions();
     const dispatch = useDispatch();
     useEffect(() => {
-        if (!loading) {
+        if (permissions && permissions.role === 'admin') {
+            dispatch(changeShop(1))
+        } else if (!loading && permissions && permissions.shop) {
             dispatch(changeShop(permissions.shop))
         }
     });

@@ -261,7 +261,7 @@ namespace RentApi.Infrastructure.Database
                     Shop = shops[0],
                     Employee = employees[0],
                     Customer = "Павлов Павел Павлович",
-                    From = DateTime.Parse("2019-01-10"),
+                    From = DateTime.Parse("2020-01-10"),
                     To = DateTime.Parse("2021-02-10"),
                 },
                 new Rent
@@ -269,7 +269,7 @@ namespace RentApi.Infrastructure.Database
                     Shop = shops[0],
                     Employee = employees[0],
                     Customer = "Егоров Егор Егорьевич",
-                    From = DateTime.Parse("2019-01-10"),
+                    From = DateTime.Parse("2020-01-10"),
                     To = DateTime.UtcNow
                 },
                 new Rent
@@ -277,7 +277,7 @@ namespace RentApi.Infrastructure.Database
                     Shop = shops[1],
                     Employee = employees[1],
                     Customer = "Александров Александр Александрович",
-                    From = DateTime.Parse("2020-01-11"),
+                    From = DateTime.Parse("2020-06-01"),
                     To = DateTime.Parse("2020-02-12"),
                     RentEquipment = new List<RentEquipment>
                     {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AutocompleteArrayInput, DateTimeInput, Edit, FormDataConsumer, NumberInput, ReferenceArrayInput, required, SimpleForm, TextInput, usePermissions } from 'react-admin';
+import { AutocompleteArrayInput, DateTimeInput, ReferenceInput, SelectInput, Edit, FormDataConsumer, NumberInput, ReferenceArrayInput, required, SimpleForm, TextInput, usePermissions } from 'react-admin';
 import EquipmentTable from './EquipmentTable';
 
 const MyShopOnly = ({children, ...props}) => { 
@@ -15,8 +15,13 @@ const RentEdit = ({ permissions, ...props }) => {
         <Edit {...props} undoable={false} >
             <MyShopOnly>
                 <SimpleForm >
-                    <TextInput disabled source="id" />
-                    <TextInput  source="customer" validate={required()} />
+                    {
+                        permissions && permissions.role === 'admin' &&
+                            <ReferenceInput source="shopId" reference="shops" >
+                                <SelectInput optionText="name" validate={required()}/>
+                            </ReferenceInput>
+                    }
+                    <TextInput source="customer" validate={required()} />
                     <DateTimeInput {...props} source="from" validate={required()} />
                     <DateTimeInput {...props} source="to" validate={required()} />
                     <DateTimeInput {...props} source="closed" />

@@ -43,7 +43,7 @@ const authProvider = {
         const perm = {
             ...permissions,
             isMyShop: (shopId) => {
-                return shopId == permissions.shop;
+                return permissions.role === 'admin' || shopId == permissions.shop;
             }
         };
 

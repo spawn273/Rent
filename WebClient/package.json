@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@nivo/line": "^0.62.0",
+    "@nivo/pie": "^0.62.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -10,6 +12,7 @@
     "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
     "mui-datatables": "^2.14.0",
+    "nivo": "^0.31.0",
     "prop-types": "^15.7.2",
     "ra-data-json-server": "^3.2.0",
     "ra-language-russian": "^3.2.1",
@@ -27,7 +30,6 @@
     "start-admin": "node tools/copy.js src/apps/admin/App.js src/App.js && yarn start",
     "start-emp": "node tools/copy.js src/apps/emp/App.js src/App.js && yarn start",
     "start-guest": "node tools/copy.js src/apps/guest/App.js src/App.js && yarn start",
-
     "build-guest": "node tools/copy.js src/apps/guest/App.js src/App.js && yarn build",
     "build-emp": "node tools/copy.js src/apps/emp/App.js src/App.js && yarn build",
     "build-admin": "node tools/copy.js src/apps/admin/App.js src/App.js && yarn build"

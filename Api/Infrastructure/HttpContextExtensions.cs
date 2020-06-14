@@ -10,23 +10,30 @@ namespace SmartAnalytics.BASF.Backend.Infrastructure
     {
         public static int GetUserId(this HttpContext context)
         {
-            return 1;
             var id = context.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             return Convert.ToInt32(id);
         }
 
         public static int GetEmployeeId(this HttpContext context)
         {
-            return 1;
-            var id = context.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var id = context.User.FindFirstValue("employee");
             return Convert.ToInt32(id);
         }
 
         public static int GetShopId(this HttpContext context)
         {
-            return 1;
-            var id = context.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var id = context.User.FindFirstValue("shop");
             return Convert.ToInt32(id);
+        }
+
+        public static string GetRole(this HttpContext context)
+        {
+            return context.User.FindFirstValue(ClaimTypes.Role);
+        }
+
+        public static bool IsAdmin(this HttpContext context)
+        {
+            return context.GetRole() == "admin";
         }
 
         public static string GetBaseUrl(this HttpContext context)

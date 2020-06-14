@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Datagrid, TextField, NumberField } from 'react-admin';
 
 const ShopList = props => (
-    <List {...props} bulkActionButtons={false} /*filters={<ListFilter/>}*/>
+    <List {...props} /*filters={<ListFilter/>}*/>
         <Datagrid optimized rowClick="edit">
             <TextField source="name" />
             <TextField source="address" />

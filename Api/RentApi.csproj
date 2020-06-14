@@ -28,5 +28,9 @@
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.24" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Api\Admin\Dashboards\DTO\" />
+  </ItemGroup>
+
 
 </Project>

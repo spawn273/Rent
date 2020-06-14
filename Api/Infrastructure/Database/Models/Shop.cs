@@ -1,4 +1,6 @@
-﻿namespace RentApi.Infrastructure.Database.Models
+﻿using System.Collections.Generic;
+
+namespace RentApi.Infrastructure.Database.Models
 {
     public class Shop
     {
@@ -8,5 +10,7 @@
         public string Phone { get; set; }
 
         public bool Archived { get; set; }
+
+        public List<Rent> Rents { get; set; }
     }
 }

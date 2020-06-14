@@ -98,41 +98,48 @@ namespace RentApi.Api
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<RentDTO>> PutRent(int id, RentDTO rent)
+        public async Task<ActionResult<RentDTO>> PutRent(int id, RentDTO dto)
         {
-            var entity = await _context.Rent.Include(x => x.RentEquipment).FirstOrDefaultAsync(x => x.Id == id);
-            if (entity == null)
+            var rent = await _context.Rent.Include(x => x.RentEquipment).FirstOrDefaultAsync(x => x.Id == id);
+            if (rent == null)
             {
                 return NotFound();
             }
 
-            entity.Customer = rent.Customer;
-            entity.From = rent.From;
-            entity.To = rent.To;
-            entity.Closed = rent.Closed;
-            entity.Payment = rent.Payment;
-            entity.Comment = rent.Comment;
-            entity.RentEquipment = rent.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList();
+            if (HttpContext.IsAdmin())
+            {
+                rent.ShopId = dto.ShopId;
+            }
+
+            rent.Customer = dto.Customer;
+            rent.From = dto.From;
+            rent.To = dto.To;
+            rent.Closed = dto.Closed;
+            rent.Payment = dto.Payment;
+            rent.Comment = dto.Comment;
+            rent.RentEquipment = dto.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList();
 
             await _context.SaveChangesAsync();
 
-            return rent;
+            return dto;
         }
 
         [HttpPost]
         public async Task<ActionResult<RentDTO>> PostRent(RentDTO dto)
         {
+            var shopId = HttpContext.IsAdmin() ? dto.ShopId : HttpContext.GetShopId();
+
             var rent = new Rent
             {
                 EmployeeId = HttpContext.GetEmployeeId(),
                 Customer = dto.Customer,
-                ShopId = HttpContext.GetShopId(),
+                ShopId = shopId,
                 From = dto.From,
                 To = dto.To,
                 Closed = null,
                 Payment = dto.Payment,
                 Comment = dto.Comment,
-                RentEquipment = dto.EquipmentIds.Select(x => new RentEquipment { EquipmentId = x }).ToList()
+                RentEquipment = dto.EquipmentIds?.Select(x => new RentEquipment { EquipmentId = x }).ToList()
             };
             _context.Rent.Add(rent);
             await _context.SaveChangesAsync();

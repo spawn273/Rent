@@ -48,6 +48,7 @@ namespace SmartAnalytics.BASF.Backend.Application.Authorization
 
             var claims = new List<Claim>();
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
+            claims.Add(new Claim("employee", user.Employee.Id.ToString()));
 
             var role = (await _userManager.GetRolesAsync(user)).First();
             claims.Add(new Claim(ClaimTypes.Role, role));

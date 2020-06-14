@@ -71,22 +71,26 @@ namespace RentApi.Api
             return equipment;
         }
 
-
         [HttpPut("{id}")]
-        public async Task<ActionResult<EquipmentDTO>> PutEquipment(int id, EquipmentDTO equipment)
+        public async Task<ActionResult<EquipmentDTO>> PutEquipment(int id, EquipmentDTO dto)
         {
-            var entity = await _context.Equipment.FirstOrDefaultAsync(x => x.Id == id);
-            if (entity == null)
+            var equipment = await _context.Equipment.FirstOrDefaultAsync(x => x.Id == id);
+            if (equipment == null)
             {
                 return NotFound();
             }
 
-            entity.Name = equipment.Name;
-            entity.EquipmentTypeId = equipment.EquipmentTypeId;
+            if (HttpContext.IsAdmin())
+            {
+                equipment.ShopId = dto.ShopId;
+            }
+
+            equipment.Name = dto.Name;
+            equipment.EquipmentTypeId = dto.EquipmentTypeId;
 
             await _context.SaveChangesAsync();
 
-            return equipment;
+            return dto;
         }
 
         [HttpPost]
@@ -94,7 +98,7 @@ namespace RentApi.Api
         {
             var equipment = new Equipment
             {
-                ShopId = HttpContext.GetShopId(),
+                ShopId = HttpContext.IsAdmin() ? dto.ShopId : HttpContext.GetShopId(),
                 EquipmentTypeId = dto.EquipmentTypeId,
                 Name = dto.Name
             };

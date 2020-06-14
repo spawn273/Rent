@@ -35,7 +35,7 @@ FullNameField.defaultProps = { label: 'Name' };
 
 const AccountList = props => {
     return (
-        <List {...props} bulkActionButtons={false} /*filters={<ListFilter/>}*/ filterDefaultValues={{ available: true }}>
+        <List {...props} /*filters={<ListFilter/>}*/ filterDefaultValues={{ available: true }}>
             <Datagrid optimized rowClick="edit">
                 <ReferenceField source="roleId" reference="roles" link="" >
                     <TextField source="name" />

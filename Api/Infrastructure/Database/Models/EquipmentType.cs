@@ -1,4 +1,6 @@
-﻿namespace RentApi.Infrastructure.Database.Models
+﻿using System.Collections.Generic;
+
+namespace RentApi.Infrastructure.Database.Models
 {
     public class EquipmentType
     {
@@ -6,5 +8,7 @@
         public string Name { get; set; }
         public int PricePerHour { get; set; }
         public int PricePerDay { get; set; }
+
+        public List<Equipment> Equipment { get; set; }
     }
 }

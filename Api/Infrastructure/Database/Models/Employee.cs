@@ -1,4 +1,5 @@
 ﻿using SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities;
+using System.Collections.Generic;
 
 namespace RentApi.Infrastructure.Database.Models
 {
@@ -11,5 +12,6 @@ namespace RentApi.Infrastructure.Database.Models
 
         public User User { get; set; }
         public Shop Shop { get; set; }
+        public List<Rent> Rents { get; set; }
     }
 }
