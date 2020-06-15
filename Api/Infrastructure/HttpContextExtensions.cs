@@ -41,6 +41,10 @@ namespace SmartAnalytics.BASF.Backend.Infrastructure
             return $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}";
         }
 
+        public static void SetTotalCount(this HttpContext context, int count)
+        {
+            context.Response.Headers.Add("X-Total-Count", count.ToString());
+        }
 
         public static ListInfo GetListInfo(this HttpContext context) {
             return new ListInfo

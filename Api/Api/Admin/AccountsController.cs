@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -52,17 +53,24 @@ namespace RentApi.Api.Admin
             var count = await query.CountAsync();
             SetTotalCount(count);
 
-            // TODO: sort
-            var result = await query
+            if (_sort == "name")
+            {
+                _sort = "firstName";
+            }
+
+            var dtos = (await query.Include(x => x.Employee).ToListAsync()).AsQueryable()
+                .ToDTO()
+                .ToList();
+            foreach (var dto in dtos)
+            {
+                dto.RoleId = (await _userManager.GetRolesAsync(await _context.Users.FindAsync(dto.Id))).First();
+            }
+            
+            var result = dtos.AsQueryable()
+                .OrderBy($"{_sort} {_order}")
                 .Skip(_start)
                 .Take(_end - _start)
-                .ToDTO()
-                .ToArrayAsync();
-
-            foreach (var account in result)
-            {
-                account.RoleId = (await _userManager.GetRolesAsync(await _context.Users.FindAsync(account.Id))).First();
-            }
+                .ToArray();
 
             return result;
         }

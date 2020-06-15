@@ -4,8 +4,10 @@ using RentApi.Api.DTO;
 using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 
 namespace RentApi.Api
@@ -23,10 +25,29 @@ namespace RentApi.Api
 
         // GET: api/EquipmentTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipmentType>>> GetEquipmentType()
+        public async Task<ActionResult<EquipmentTypeDTO[]>> GetEquipmentType(
+            int _start = 0, int _end = 10,
+            string _sort = "id", string _order = "ASC",
+            string q = "")
         {
-            Response.Headers.Add("X-Total-Count", _context.EquipmentType.Count().ToString());
-            return await _context.EquipmentType.ToListAsync();
+            var query = _context.EquipmentType.AsQueryable().Where(x => !x.Archived);
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                query = query.Where(x => EF.Functions.ILike(x.Name, $"%{q}%"));
+            }
+
+            var count = await query.CountAsync();
+            HttpContext.SetTotalCount(count);
+
+            var result = await query
+                .OrderBy($"{_sort} {_order}")
+                .Skip(_start)
+                .Take(_end - _start)
+                .ToDTO()
+                .ToArrayAsync();
+
+            return result;
         }
 
         [HttpGet("many")]

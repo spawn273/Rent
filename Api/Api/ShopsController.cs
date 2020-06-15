@@ -46,15 +46,14 @@ namespace RentApi.Api
             SetTotalCount(count);
 
             var result = await query
+                .OrderBy($"{_sort} {_order}")
                 .Skip(_start)
                 .Take(_end - _start)
-                .OrderBy($"{_sort} {_order}")
                 .ToDTO()
                 .ToArrayAsync();
 
             return result;
         }
-
 
         [HttpGet("many")]
         public async Task<ActionResult<ShopDTO[]>> GetMany([FromQuery] int[] id)

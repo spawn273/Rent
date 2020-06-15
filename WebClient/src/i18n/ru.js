@@ -46,6 +46,8 @@ const resources = {
         name: 'Арендные точки |||| Арендные точки',
         fields: {
             name: 'Наименование',
+            address: 'Адрес',
+            phone: 'Телефон',
         },
     },
 
@@ -61,7 +63,15 @@ const resources = {
         }
     },
 
-
+    'admin/accounts': {
+        name: 'Аккаунты',
+        fields: {
+            roleId: 'Роль',
+            name: 'Имя',
+            userName: 'Логин',
+            shopId: 'Арендная точка',
+        }
+    },
 }
 
 const custom = {

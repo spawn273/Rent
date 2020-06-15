@@ -54,15 +54,11 @@ namespace RentApi.Api.Guest
             var count = await query.CountAsync();
             SetTotalCount(count);
 
-            var paged = query
-                .Skip(_start)
-                .Take(_end - _start);
-
             IQueryable<EquipmentDTO> ordered;
             if (_sort == "available")
             {
                 // Sort by DTO
-                ordered = paged
+                ordered = query
                     .ToDTO()
                     .OrderBy($"{_sort} {_order}");
             } 
@@ -74,12 +70,15 @@ namespace RentApi.Api.Guest
                 {
                     order = $"equipmentType.name {_order}";
                 }
-                ordered = paged
+                ordered = query
                     .OrderBy(order)
                     .ToDTO();
             }
 
-            var result = await ordered.ToArrayAsync();
+            var result = await ordered
+                .Skip(_start)
+                .Take(_end - _start)
+                .ToArrayAsync();
 
             return result;
         }

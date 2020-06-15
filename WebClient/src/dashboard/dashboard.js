@@ -16,7 +16,7 @@ const styles = {
     pie: { height: '300px' },
     line: { height: '300px'},
 };
-
+           
 export default () => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
@@ -71,7 +71,7 @@ export default () => {
                 </div>
                 <div style={styles.singleCol}>
                     <Card>
-                        <CardHeader title={'Количество выданных аренд'} /> 
+                        <CardHeader title={'Аренды по сотруднику'} /> 
                         <CardContent style={styles.pie}>
                             <Pie data={dashboards.rentsPerMonthPie}></Pie>
                         </CardContent>
