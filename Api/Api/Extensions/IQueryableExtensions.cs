@@ -54,7 +54,8 @@ namespace RentApi.Api.Extensions
                 Id = x.Id,
                 Name = $"{x.User.FirstName} {x.User.MiddleName} {x.User.LastName}",
                 ShopId = x.ShopId,
-                UserId = x.UserId
+                UserId = x.UserId,
+                Phone = x.Phone
             });
         }
 

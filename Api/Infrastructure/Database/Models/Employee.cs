@@ -9,6 +9,7 @@ namespace RentApi.Infrastructure.Database.Models
 
         public int UserId { get; set; }
         public int? ShopId { get; set; }
+        public string Phone { get; set; }
 
         public User User { get; set; }
         public Shop Shop { get; set; }

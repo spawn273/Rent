@@ -24,7 +24,7 @@ export default () => {
 
     async function fetchData() {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/admin/dashboards/all");
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/dashboards/all`);
         res.json()
             .then(res => setDashboards(res))
             .finally(() => {
@@ -65,7 +65,7 @@ export default () => {
                     <Card>
                         <CardHeader title={'Аренды по типу оборудования'} />
                         <CardContent style={styles.pie}>
-                            <Pie data={dashboards.equipmentTypes}></Pie>
+                            <Pie data={dashboards.rentsPerEquipmentType}></Pie>
                         </CardContent>
                     </Card>
                 </div>
@@ -73,12 +73,11 @@ export default () => {
                     <Card>
                         <CardHeader title={'Аренды по сотруднику'} /> 
                         <CardContent style={styles.pie}>
-                            <Pie data={dashboards.rentsPerMonthPie}></Pie>
+                            <Pie data={dashboards.rentsPerEmployee}></Pie>
                         </CardContent>
                     </Card>
                 </div>
             </div>
         </div>
-
     )
 };

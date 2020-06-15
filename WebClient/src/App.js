@@ -1,20 +1,30 @@
 import React from 'react';
 import { Admin, Resource } from 'react-admin';
+import authProvider from './authProvider/authProvider';
+import customRoutes from './customRoutes/customRoutes';
 import dataProvider from './dataProvider/dataProvider';
 import i18n from './i18n/ru';
-import accounts from './apps/admin/resources/accounts';
-import authProvider from './apps/admin/authProvider';
-import shops from './resources/shops';
+import MyLayout from './layout/MyLayout';
+import employees from './resources/employees';
+import equipment from './resources/equipment';
 import equipmentTypes from './resources/equipmentTypes';
-import dashboard from './dashboard/dashboard';
+import rents from './resources/rents';
+import shops from './resources/shops';
+import shopReducer from './shopSelector/shopReducer';
 
 const App = () => (
-    <Admin dataProvider={dataProvider} dashboard={dashboard} i18nProvider={i18n} authProvider={authProvider}>
-        <Resource name="admin/accounts" {...accounts} />
-        <Resource name="shops" {...shops}/>
-        <Resource name="equipmentTypes" {...equipmentTypes}/>
-        <Resource name="roles" />
+    <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} 
+        dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18n}>
+
+        <Resource name="shops" list={shops.list} />
+        <Resource name="rents" {...rents} />
+        <Resource name="employees" {...employees} />
+        <Resource name="customers" />
+        <Resource name="equipment" {...equipment}/>
+        <Resource name="equipmentTypes" list={equipmentTypes.list} />
+
+
     </Admin>
 );
-
+ 
 export default App;

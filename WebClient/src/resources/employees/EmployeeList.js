@@ -3,7 +3,7 @@ import { List, Datagrid, TextField, ReferenceField } from 'react-admin';
 
 const EmployeeList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid>
             <TextField source="id" />
             <TextField source="name" />
             <ReferenceField source="shopId" reference="shops">

@@ -11,15 +11,6 @@ import equipmentTypes from './resources/equipmentTypes';
 import rents from './resources/rents';
 import shops from './resources/shops';
 import shopReducer from './shopSelector/shopReducer';
-// const Wrapper1 = (props) => {
-//     const shop = useSelector((state) => state.shop);
-//     return props.children(props, shop);
-// };
-
-// const Wrapper = (props) => { 
-//     const shop = useSelector((state) => state.shop);
-//     return ({children})
-// };
 
 const App = () => (
     <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} 
@@ -30,31 +21,10 @@ const App = () => (
         <Resource name="employees" {...employees} />
         <Resource name="customers" />
         <Resource name="equipment" {...equipment}/>
-        <Resource name="equipmentTypes" {...equipmentTypes} />
+        <Resource name="equipmentTypes" list={equipmentTypes.list} />
 
 
     </Admin>
 );
-
-        // {permissions => {
-        //     return [
-        //         <Resource name="shops" list={ShopsList} />,
-        //         // <Wrapper1>
-        //         //     {
-        //         //         (props, shop) => <Resource {...props} name="rents" list={RentsList} 
-        //         //                             edit={RentsEdit} 
-        //         //                             create={RentsCreate}/>
-        //         //     }
-        //         // </Wrapper1>,
-
-        //         <Resource name="rents" list={RentsList}
-        //             edit={RentsEdit}
-        //             create={RentsCreate} />,
-
-        //         <Resource name="employees" list={EmployeesList} />,
-        //         <Resource name="equipment" list={EquipmentList} edit={EquipmentEdit} create={EquipmentCreate} />,
-        //         <Resource name="equipmentTypes" list={EquipmentTypesList} />,
-        //     ]
-        // }}
 
 export default App;

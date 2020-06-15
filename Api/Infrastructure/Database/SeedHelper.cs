@@ -94,12 +94,14 @@ namespace RentApi.Infrastructure.Database
                 new Employee
                 {
                     Shop = shops[0],
-                    User = users[0]
+                    User = users[0],
+                    Phone = "+79127891000"
                 },
                 new Employee
                 {
                     Shop = shops[1],
-                    User = users[1]
+                    User = users[1],
+                    Phone = "+79127892000"
                 },
             };
 

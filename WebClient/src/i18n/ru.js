@@ -37,7 +37,7 @@ const resources = {
     employees: {
         name: 'Сотрудники |||| Сотрудники',
         fields: {
-            name: 'Наименование',
+            name: 'Имя',
             shopId: 'Арендная точка',
         },
     },
