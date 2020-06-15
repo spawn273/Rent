@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
+using SmartAnalytics.BASF.Backend.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace RentApi.Api.Guest
 {
     [Route("api/guest/[controller]")]
     [ApiController]
-    public class EquipmentController : BaseApiController
+    public class EquipmentController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -52,7 +53,7 @@ namespace RentApi.Api.Guest
             }
 
             var count = await query.CountAsync();
-            SetTotalCount(count);
+            HttpContext.SetTotalCount(count);
 
             IQueryable<EquipmentDTO> ordered;
             if (_sort == "available")

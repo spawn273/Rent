@@ -78,7 +78,9 @@ const RentList = ({ permissions, ...props }) => {
     const classes = listStyles();
     const shop = useSelector((state) => state.shop);
     const isMyShop = permissions && permissions.isMyShop(shop);
-    return <List {...props} filters={<ListFilter />} 
+    return <List {...props} 
+        sort={{ field: 'id', order: 'DESC' }}
+        filters={<ListFilter />} 
         actions={<ListActions create={isMyShop} {...props} />}
         filter={{ shopId: shop }}>
         <Datagrid optimized classes={{ headerCell: classes.headerCell }}  rowClick="show">

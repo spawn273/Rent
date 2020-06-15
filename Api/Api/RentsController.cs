@@ -17,7 +17,7 @@ namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RentsController : BaseApiController
+    public class RentsController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -30,7 +30,7 @@ namespace RentApi.Api
         [HttpGet]
         public async Task<ActionResult<RentDTO[]>> GetRents(int? shopId,
             int _start = 0, int _end = 10,
-            string _sort = "id", string _order = "ASC",
+            string _sort = "id", string _order = "DESC",
             bool opened = false, DateTime? endLte = null,
             string q = ""
             )
@@ -54,11 +54,14 @@ namespace RentApi.Api
 
             if (!string.IsNullOrWhiteSpace(q))
             {
-                query = query.Where(x => EF.Functions.ILike(x.Customer, $"%{q}%") || EF.Functions.ILike(x.Comment, $"%{q}%"));
+                query = query.Where(x =>
+                EF.Functions.ILike(x.Id.ToString(), $"%{q}%") ||
+                EF.Functions.ILike(x.Customer, $"%{q}%") || 
+                EF.Functions.ILike(x.Comment, $"%{q}%"));
             }
 
             var count = await query.CountAsync();
-            SetTotalCount(count);
+            HttpContext.SetTotalCount(count);
 
             var result = await query
                 .OrderBy($"{_sort} {_order}")

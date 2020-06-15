@@ -10,12 +10,13 @@ using RentApi.Api.DTO;
 using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure;
 
 namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShopsController : BaseApiController
+    public class ShopsController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -43,7 +44,7 @@ namespace RentApi.Api
             }
 
             var count = await query.CountAsync();
-            SetTotalCount(count);
+            HttpContext.SetTotalCount(count);
 
             var result = await query
                 .OrderBy($"{_sort} {_order}")

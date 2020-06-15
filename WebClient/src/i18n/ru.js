@@ -5,6 +5,7 @@ const resources = {
     rents: {
         name: 'Аренда |||| Аренды',
         fields: {
+            id: 'Номер договора',
             customer: 'Клиент',
             from: "Дата выдачи",
             to: "Дата возврата (договор)",
@@ -18,15 +19,17 @@ const resources = {
     equipment: {
         name: 'Оборудование |||| Оборудование',
         fields: {
+            id: 'Инвентарный номер',
             name: 'Наименование',
             pricePerDay: 'Цена за день',
             pricePerHour: 'Цена за час',
             shopId: 'Арендная точка',
             equipmentTypeId: 'Тип оборудования',
+            rentIds: 'Текущая аренда',
         },
     },
     equipmentTypes: {
-        name: 'Тип оборудования |||| Тип оборудования',
+        name: 'Цены',
         fields: {
             name: 'Наименование',
             pricePerDay: 'Цена за день',
@@ -39,6 +42,7 @@ const resources = {
         fields: {
             name: 'Имя',
             shopId: 'Арендная точка',
+            phone: 'Телефон',
         },
     },
 
@@ -70,6 +74,11 @@ const resources = {
             name: 'Имя',
             userName: 'Логин',
             shopId: 'Арендная точка',
+            phone: 'Телефон',
+            password: 'Пароль',
+            firstName: 'Имя',
+            middleName: 'Отчество',
+            lastName: 'Фамилия',
         }
     },
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EquipmentController : BaseApiController
+    public class EquipmentController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -26,25 +27,45 @@ namespace RentApi.Api
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipmentDTO>>> GetEquipmentList(int? shopId, int? rentId)
+        public async Task<ActionResult<IEnumerable<EquipmentDTO>>> GetList(
+            int _start = 0, int _end = 10,
+            string _sort = "id", string _order = "ASC",
+            int? shopId = null, int? rentId = null,
+            string q = "")
         {
-            var query = _context.Equipment.AsQueryable();
+            var query = _context.Equipment.AsQueryable().Where(x => !x.Archived);
 
             if (shopId.HasValue)
             {
                 query = query.Where(x => x.ShopId == shopId);
             }
 
-            if (rentId.HasValue)
+            //if (rentId.HasValue)
+            //{
+            //    query = _context.RentEquipment
+            //        .Where(x => x.RentId == rentId)
+            //        .Select(x => x.Equipment);
+            //}
+
+            if (!string.IsNullOrWhiteSpace(q))
             {
-                query = _context.RentEquipment
-                    .Where(x => x.RentId == rentId)
-                    .Select(x => x.Equipment);
+                query = query.Where(x => 
+                    EF.Functions.ILike(x.Id.ToString(), $"%{q}%") ||
+                    EF.Functions.ILike(x.Name, $"%{q}%")
+                );
             }
 
-            var equipment = await query.ToDTO().ToArrayAsync();
-            SetTotalCount(equipment.Length);
-            return equipment;
+            var count = await query.CountAsync();
+            HttpContext.SetTotalCount(count);
+
+            var result = await query
+                .OrderBy($"{_sort} {_order}")
+                .Skip(_start)
+                .Take(_end - _start)
+                .ToDTO()
+                .ToArrayAsync();
+
+            return result;
         }
 
         [HttpGet("many")]
@@ -119,7 +140,7 @@ namespace RentApi.Api
                 return NotFound();
             }
 
-            _context.Equipment.Remove(equipment);
+            equipment.Archived = true;
             await _context.SaveChangesAsync();
 
             return equipment;

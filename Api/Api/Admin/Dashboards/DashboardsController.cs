@@ -17,7 +17,7 @@ namespace RentApi.Api.Admin.Dashboards
 {
     [Route("api/admin/[controller]")]
     [ApiController]
-    public class DashboardsController : BaseApiController
+    public class DashboardsController : ControllerBase
     {
         private readonly AppDbContext _context;
 

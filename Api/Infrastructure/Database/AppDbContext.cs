@@ -11,7 +11,7 @@ namespace RentApi.Infrastructure.Database
 {
     public class AppDbContext : IdentityDbContext<User, Role, int>
     {
-        public AppDbContext (DbContextOptions<AppDbContext> options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
@@ -28,6 +28,16 @@ namespace RentApi.Infrastructure.Database
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder
+               .Entity<Equipment>()
+                .Property(x => x.Id)
+                .HasIdentityOptions(10000);
+
+            modelBuilder
+               .Entity<Rent>()
+                .Property(x => x.Id)
+                .HasIdentityOptions(20000);
+
             // https://github.com/dotnet/efcore/issues/4711
             modelBuilder
                .Entity<Rent>()
@@ -43,6 +53,7 @@ namespace RentApi.Infrastructure.Database
                .Entity<Rent>()
                .Property(x => x.Closed)
                .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
+
         }
     }
 }

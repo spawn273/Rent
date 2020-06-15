@@ -1,16 +1,17 @@
 import React from 'react';
 import { List, Datagrid, TextField, ReferenceField } from 'react-admin';
+import { useSelector } from 'react-redux';
 
-const EmployeeList = props => (
-    <List {...props}>
-        <Datagrid>
-            <TextField source="id" />
-            <TextField source="name" />
-            <ReferenceField source="shopId" reference="shops">
+const EmployeeList = props => {
+    const shop = useSelector((state) => state.shop);
+    return (
+        <List {...props} filter={{ shopId: shop }}>
+            <Datagrid>
                 <TextField source="name" />
-            </ReferenceField>
-        </Datagrid>
-    </List>
-);
+                <TextField source="phone" />
+            </Datagrid>
+        </List>
+    );
+}
 
 export default EmployeeList;

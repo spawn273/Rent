@@ -5,19 +5,19 @@ const AccountEdit = ({ permissions, ...props }) => {
     return (
         <Edit {...props} undoable={false} >
             <SimpleForm >
-                <TextInput source="firstName" validate={required()} />
-                <TextInput source="middleName" validate={required()} />
-                <TextInput source="lastName" validate={required()} />
-
-                <ReferenceInput source="roleId" reference="roles" validate={required()}>
-                    <SelectInput optionText="name" />
+                <TextInput source="userName" validate={[required(), email()]} type="email" />
+                <ReferenceInput source="roleId" reference="roles">
+                    <SelectInput optionText="name"  validate={required()} />
                 </ReferenceInput>
 
                 <ReferenceInput source="shopId" reference="shops">
-                    <SelectInput optionText="name"/>
+                    <SelectInput optionText="name" validate={required()} />
                 </ReferenceInput>
-
-                <TextInput source="userName" validate={email()} type="email" />
+                
+                <TextInput source="firstName" validate={required()} />
+                <TextInput source="lastName" validate={required()} />
+                <TextInput source="middleName" validate={required()} />
+                <TextInput source="phone"/>
 
             </SimpleForm>
         </Edit>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +10,13 @@ using RentApi.Api.DTO;
 using RentApi.Api.Extensions;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure;
 
 namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeesController : BaseApiController
+    public class EmployeesController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -23,12 +25,29 @@ namespace RentApi.Api
             _context = context;
         }
 
-        // GET: api/Employees
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee()
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetList(
+            int _start = 0, int _end = 10,
+            string _sort = "id", string _order = "ASC",
+            int? shopId = null)
         {
-            var result = await _context.Employee.ToDTO().ToArrayAsync();
-            SetTotalCount(_context.Employee.Count());
+            var query = _context.Employee.AsQueryable().Where(x => !x.User.Deleted);
+
+            if (shopId.HasValue)
+            {
+                query = query.Where(x => x.ShopId == shopId);
+            }
+
+            var count = await query.CountAsync();
+            HttpContext.SetTotalCount(count);
+
+            var result = await query
+                .ToDTO()
+                .OrderBy($"{_sort} {_order}")
+                .Skip(_start)
+                .Take(_end - _start)
+                .ToArrayAsync();
+
             return result;
         }
 
@@ -43,7 +62,6 @@ namespace RentApi.Api
             return result;
         }
 
-        // GET: api/Employees/5
         [HttpGet("{id}")]
         public async Task<ActionResult<EmployeeDTO>> GetEmployee(int id)
         {
@@ -56,46 +74,6 @@ namespace RentApi.Api
             {
                 return NotFound();
             }
-
-            return employee;
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<EmployeeDTO>> PutEmployee(int id, EmployeeDTO dto)
-        {
-            var entity = await _context.Employee.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-
-            await _context.SaveChangesAsync();
-
-            return dto;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> PostEmployee(EmployeeDTO employee)
-        {
-            return Ok();
-            //_context.Employee.Add(employee);
-            //await _context.SaveChangesAsync();
-
-            //return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
-        }
-
-        // DELETE: api/Employees/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Employee>> DeleteEmployee(int id)
-        {
-            var employee = await _context.Employee.FindAsync(id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            _context.Employee.Remove(employee);
-            await _context.SaveChangesAsync();
 
             return employee;
         }

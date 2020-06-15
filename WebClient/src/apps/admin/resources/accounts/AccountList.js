@@ -29,6 +29,7 @@ const AccountList = props => {
                 </ReferenceField>
                 <FullNameField source="name" />
                 <TextField source="userName" />
+                <TextField source="phone" />
                 <ReferenceField source="shopId" reference="shops" link="show" >
                     <TextField source="name" />
                 </ReferenceField>

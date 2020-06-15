@@ -9,13 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentApi.Infrastructure.Database;
 using RentApi.Infrastructure.Database.Models;
+using SmartAnalytics.BASF.Backend.Infrastructure;
 using SmartAnalytics.BASF.Backend.Infrastructure.Database.Entities;
 
 namespace RentApi.Api.Admin
 {
     [Route("api/admin/[controller]")]
     [ApiController]
-    public class AccountsController : BaseApiController
+    public class AccountsController : ControllerBase
     {
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
@@ -51,7 +52,7 @@ namespace RentApi.Api.Admin
             }
 
             var count = await query.CountAsync();
-            SetTotalCount(count);
+            HttpContext.SetTotalCount(count);
 
             if (_sort == "name")
             {
@@ -113,6 +114,7 @@ namespace RentApi.Api.Admin
                     user.LastName = dto.LastName;
                     user.UserName = dto.UserName;
                     user.Employee.ShopId = dto.ShopId;
+                    user.Employee.Phone = dto.Phone;
 
                     var oldRole = (await _userManager.GetRolesAsync(user)).First();
                     var newRole = dto.RoleId;
@@ -170,7 +172,8 @@ namespace RentApi.Api.Admin
                     var emloyee = new Employee
                     {
                         UserId = user.Id,
-                        ShopId = dto.ShopId
+                        ShopId = dto.ShopId,
+                        Phone = dto.Phone
                     };
                     _context.Employee.Add(emloyee);
 

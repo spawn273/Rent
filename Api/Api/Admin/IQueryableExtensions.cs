@@ -16,7 +16,8 @@ namespace RentApi.Api.Admin
                 MiddleName = x.MiddleName,
                 LastName = x.LastName,
                 UserName = x.UserName,
-                ShopId = x.Employee.ShopId
+                ShopId = x.Employee.ShopId,
+                Phone = x.Employee.Phone
             });
         }
     }

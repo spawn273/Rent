@@ -23,9 +23,8 @@ namespace RentApi.Api
             _context = context;
         }
 
-        // GET: api/EquipmentTypes
         [HttpGet]
-        public async Task<ActionResult<EquipmentTypeDTO[]>> GetEquipmentType(
+        public async Task<ActionResult<EquipmentTypeDTO[]>> GetList(
             int _start = 0, int _end = 10,
             string _sort = "id", string _order = "ASC",
             string q = "")
@@ -61,7 +60,6 @@ namespace RentApi.Api
             return result;
         }
 
-        // GET: api/EquipmentTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentTypeDTO>> GetEquipmentType(int id)
         {
@@ -122,7 +120,7 @@ namespace RentApi.Api
                 return NotFound();
             }
 
-            _context.EquipmentType.Remove(equipmentType);
+            equipmentType.Archived = true;
             await _context.SaveChangesAsync();
 
             return equipmentType;

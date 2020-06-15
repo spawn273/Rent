@@ -2,29 +2,16 @@ name: Docker
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
-#     tags:
-#       - v*
-
-  # Run tests for any PRs.
-  pull_request:
-
 env:
-  # TODO: Change variable to your image's name.
   IMAGE_NAME: image
 
 jobs:
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
   push:
-
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
     steps:
       - uses: actions/checkout@v2
 
@@ -37,8 +24,8 @@ jobs:
       - name: Push image
         run: |
           docker-compose push
-          
-      - name: copy file via ssh key
+
+      - name: Copy docker-compose.yaml
         uses: appleboy/scp-action@master
         with:
           host: ec2-3-12-144-198.us-east-2.compute.amazonaws.com
@@ -48,7 +35,7 @@ jobs:
           source: "docker-compose.yaml"
           target: "~/"
           
-      - name: multiple command
+      - name: Run docker stack deploy
         uses: appleboy/ssh-action@master
         with:
           host: ec2-3-12-144-198.us-east-2.compute.amazonaws.com

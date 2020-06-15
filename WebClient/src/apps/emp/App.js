@@ -16,13 +16,11 @@ const App = () => (
     <Admin customReducers={{ shop: shopReducer }} customRoutes={customRoutes} layout={MyLayout} 
         dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18n}>
 
-        <Resource name="shops" list={shops.list} />
         <Resource name="rents" {...rents} />
-        <Resource name="employees" {...employees} />
-        <Resource name="customers" />
         <Resource name="equipment" {...equipment}/>
         <Resource name="equipmentTypes" list={equipmentTypes.list} />
-
+        <Resource name="employees" {...employees} />
+        <Resource name="shops" list={shops.list} />
 
     </Admin>
 );

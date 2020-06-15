@@ -5,24 +5,21 @@ import { func } from 'prop-types';
 const AccountCreate = (props) => (
     <Create {...props}>
         <SimpleForm redirect="list">
-            <TextInput source="firstName" validate={required()} />
-            <TextInput source="middleName" validate={required()} />
-            <TextInput source="lastName" validate={required()} />
+            <TextInput source="userName" validate={[required(), email()]} type="email" />
+            <PasswordInput source="password" initiallyVisible validate={required()} />
 
-            <ReferenceInput source="roleId" reference="roles" validate={required()}>
-                <SelectInput optionText="name" />
+            <ReferenceInput source="roleId" reference="roles">
+                <SelectInput optionText="name" validate={required()} />
             </ReferenceInput>
 
-            <FormDataConsumer >
-                {({formData}) => (
-                    <ReferenceInput source="shopId" reference="shops" /*disabled={!employeeSelected(formData)} validate={employeeSelected(formData) ? required() : null}*/>
-                        <SelectInput optionText="name"/>
-                    </ReferenceInput>
-                )}
-            </FormDataConsumer>
+            <ReferenceInput source="shopId" reference="shops">
+                <SelectInput optionText="name" validate={required()} />
+            </ReferenceInput>
 
-            <TextInput source="userName" validate={email()} type="email" />
-            <PasswordInput source="password" initiallyVisible validate={required()} />
+            <TextInput source="firstName" validate={required()} />
+            <TextInput source="lastName" validate={required()} />
+            <TextInput source="middleName" validate={required()} />
+            <TextInput source="phone"/>
 
         </SimpleForm>
     </Create>

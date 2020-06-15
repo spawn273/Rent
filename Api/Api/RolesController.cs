@@ -18,7 +18,7 @@ namespace RentApi.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : BaseApiController
+    public class RolesController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -31,7 +31,7 @@ namespace RentApi.Api
         public async Task<ActionResult<RoleDTO[]>> Get()
         {
             var roles = await _context.Roles.ToDTO().ToArrayAsync();
-            SetTotalCount(roles.Length);
+            HttpContext.SetTotalCount(roles.Length);
             return roles;
         }
 

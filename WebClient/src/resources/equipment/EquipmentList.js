@@ -1,11 +1,17 @@
 import React from 'react';
-import { DateField, ReferenceArrayField, SingleFieldList, ChipField, Datagrid, List, ReferenceField, TextField } from 'react-admin';
+import { Filter, SearchInput, ReferenceArrayField, SingleFieldList, ChipField, Datagrid, List, ReferenceField, TextField } from 'react-admin';
 import { useSelector } from 'react-redux';
+
+const ListFilter = (props) => (
+    <Filter {...props}>
+        <SearchInput source="q" alwaysOn />
+    </Filter>
+);
 
 const EquipmentList = props => {
     const shop = useSelector((state) => state.shop);
     return (
-        <List {...props} filter={{ shopId: shop }}>
+        <List {...props} filter={{ shopId: shop }} filters={<ListFilter />}>
         <Datagrid rowClick="edit">
                 <TextField source="id" />
                 <TextField source="name" />
