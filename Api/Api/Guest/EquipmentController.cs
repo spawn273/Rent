@@ -56,7 +56,7 @@ namespace RentApi.Api.Guest
             HttpContext.SetTotalCount(count);
 
             IQueryable<EquipmentDTO> ordered;
-            if (_sort == "available")
+            if (_sort == "available" || _sort == "pricePerHour" || _sort == "pricePerDay")
             {
                 // Sort by DTO
                 ordered = query

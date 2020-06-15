@@ -1,5 +1,5 @@
 import React from 'react';
-import { BooleanField, SearchInput, BooleanInput, Filter, ReferenceArrayInput, ReferenceInput, SelectInput, SelectArrayInput, ReferenceArrayField, SingleFieldList, ChipField, Datagrid, List, ReferenceField, TextField } from 'react-admin';
+import { BooleanField, NumberField, SearchInput, BooleanInput, Filter, ReferenceArrayInput, ReferenceInput, SelectInput, SelectArrayInput, ReferenceArrayField, SingleFieldList, ChipField, Datagrid, List, ReferenceField, TextField } from 'react-admin';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -37,6 +37,8 @@ const EquipmentList = props => {
                 <TextField source="type" />
                 <TextField source="name" />
                 <BooleanField source="available" />
+                <NumberField source="pricePerHour" />
+                <NumberField source="pricePerDay" />
                 <ReferenceField source="shopId" reference="shops" link="show" >
                     <TextField source="name" />
                 </ReferenceField>

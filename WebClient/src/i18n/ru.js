@@ -62,6 +62,8 @@ const resources = {
             name: 'Наименование',
             type: 'Тип оборудования',
             shopId: 'Арендная точка',
+            pricePerDay: 'Цена за день',
+            pricePerHour: 'Цена за час',
             shop: 'Точка',
             equipmentType: 'Тип',
         }

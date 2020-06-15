@@ -7,6 +7,9 @@
         public string Name { get; set; }
         public bool Available { get; set; }
 
+        public int PricePerHour { get; set; }
+        public int PricePerDay { get; set; }
+
         public int ShopId { get; set; }
         public int EquipmentTypeId { get; set; }
     }

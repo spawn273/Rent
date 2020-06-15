@@ -15,7 +15,9 @@ namespace RentApi.Api.Guest
                 Name = x.Name,
                 ShopId = x.ShopId,
                 EquipmentTypeId = x.EquipmentTypeId,
-                Available = !x.RentEquipment.Any()
+                Available = !x.RentEquipment.Any(),
+                PricePerHour = x.EquipmentType.PricePerHour,
+                PricePerDay = x.EquipmentType.PricePerDay
             });
         }
     }
